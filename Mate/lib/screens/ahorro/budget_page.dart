@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:bankingapp/json/budget_json.dart';
 import 'package:bankingapp/json/day_month.dart';
-import 'package:bankingapp/screens/create_budge_page.dart';
+import 'package:bankingapp/screens/ahorro/create_budge_page.dart';
 import 'package:bankingapp/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons_null_safety/flutter_icons_null_safety.dart';

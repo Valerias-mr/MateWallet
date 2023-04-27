@@ -1,6 +1,6 @@
 import 'package:bankingapp/json/daily_json.dart';
 import 'package:bankingapp/json/day_month.dart';
-import 'package:bankingapp/screens/edit_gestion.dart';
+import 'package:bankingapp/screens/gestion_gastos/edit_gestion.dart';
 import 'package:bankingapp/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons_null_safety/flutter_icons_null_safety.dart';

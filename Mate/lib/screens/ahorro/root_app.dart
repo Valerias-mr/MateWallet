@@ -1,8 +1,7 @@
-import 'package:bankingapp/screens/budget_page.dart';
-import 'package:bankingapp/screens/create_budge_page.dart';
-import 'package:bankingapp/screens/daily_page.dart';
-import 'package:bankingapp/screens/profile_page.dart';
-import 'package:bankingapp/screens/stats_page.dart';
+import 'package:bankingapp/screens/ahorro/budget_page.dart';
+import 'package:bankingapp/screens/ahorro/create_budge_page.dart';
+import 'package:bankingapp/screens/gestion_gastos/daily_page.dart';
+import 'package:bankingapp/screens/analisis/stats_page.dart';
 import 'package:bankingapp/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons_null_safety/flutter_icons_null_safety.dart';
