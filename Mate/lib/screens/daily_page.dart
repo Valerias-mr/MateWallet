@@ -1,5 +1,6 @@
 import 'package:bankingapp/json/daily_json.dart';
 import 'package:bankingapp/json/day_month.dart';
+import 'package:bankingapp/screens/edit_gestion.dart';
 import 'package:bankingapp/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons_null_safety/flutter_icons_null_safety.dart';
@@ -42,73 +43,20 @@ class _DailyPageState extends State<DailyPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Daily Transaction",
+                        "Gestión de Gastos",
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: black),
                       ),
-                      Icon(AntDesign.search1)
                     ],
                   ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: List.generate(days.length, (index) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              activeDay = index;
-                            });
-                          },
-                          child: Container(
-                            width: (MediaQuery.of(context).size.width - 40) / 7,
-                            child: Column(
-                              children: [
-                                Text(
-                                  days[index]['label'],
-                                  style: TextStyle(fontSize: 10),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Container(
-                                  width: 30,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                      color: activeDay == index
-                                          ? primary
-                                          : Colors.transparent,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                          color: activeDay == index
-                                              ? primary
-                                              : black.withOpacity(0.1))),
-                                  child: Center(
-                                    child: Text(
-                                      days[index]['day'],
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w600,
-                                          color: activeDay == index
-                                              ? white
-                                              : black),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      }))
                 ],
               ),
             ),
           ),
           SizedBox(
-            height: 30,
+            height: 15,
           ),
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
@@ -119,8 +67,9 @@ class _DailyPageState extends State<DailyPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
+                      GestureDetector(child: Container(
                         width: (size.width - 40) * 0.7,
+                        
                         child: Row(
                           children: [
                             Container(
@@ -167,6 +116,13 @@ class _DailyPageState extends State<DailyPage> {
                             )
                           ],
                         ),
+                      ),
+                      onTap: (){
+                        Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EditTransaction()),
+            );
+                      },
                       ),
                       Container(
                         width: (size.width - 40) * 0.3,

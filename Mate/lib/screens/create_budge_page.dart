@@ -2,6 +2,7 @@ import 'package:bankingapp/json/create_budget_json.dart';
 import 'package:bankingapp/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons_null_safety/flutter_icons_null_safety.dart';
+import 'package:lottie/lottie.dart';
 
 class CreatBudgetPage extends StatefulWidget {
   @override
@@ -11,12 +12,14 @@ class CreatBudgetPage extends StatefulWidget {
 class _CreatBudgetPageState extends State<CreatBudgetPage> {
   int activeCategory = 0;
   TextEditingController _budgetName =
-      TextEditingController(text: "Grocery Budget");
+      TextEditingController(text: "Presupuesto de compras");
+        TextEditingController _budgetDescripcion =
+      TextEditingController(text: "Marranito de compras");
   TextEditingController _budgetPrice = TextEditingController(text: "\$1500.00");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: grey.withOpacity(0.05),
+      backgroundColor: Colors.white,
       body: getBody(),
     );
   }
@@ -38,7 +41,7 @@ class _CreatBudgetPageState extends State<CreatBudgetPage> {
             ]),
             child: Padding(
               padding: const EdgeInsets.only(
-                  top: 60, right: 20, left: 20, bottom: 25),
+                  top: 60, right: 20, left: 20),
               child: Column(
                 children: [
                   Row(
@@ -58,93 +61,29 @@ class _CreatBudgetPageState extends State<CreatBudgetPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
-            child: Text(
-              "Elegir Categoria",
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: black.withOpacity(0.5)),
+          padding: EdgeInsets.only(top: 50),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 255, 255, 255),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.0),
+                  spreadRadius: 10,
+                  blurRadius: 3,
+                  // changes position of shadow
+                ),
+              ],
+            ),
+            child: Lottie.network(
+              'https://assets10.lottiefiles.com/packages/lf20_2wkuqm8b.json',
+              fit: BoxFit.contain,
+              width: 500
             ),
           ),
-          SizedBox(
-            height: 20,
-          ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-                children: List.generate(categories.length, (index) {
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    activeCategory = index;
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 10,
-                  ),
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 10,
-                    ),
-                    width: 150,
-                    height: 170,
-                    decoration: BoxDecoration(
-                        color: white,
-                        border: Border.all(
-                            width: 2,
-                            color: activeCategory == index
-                                ? primary
-                                : Colors.transparent),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: grey.withOpacity(0.01),
-                            spreadRadius: 10,
-                            blurRadius: 3,
-                            // changes position of shadow
-                          ),
-                        ]),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 25, right: 25, top: 20, bottom: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: grey.withOpacity(0.15)),
-                              child: Center(
-                                child: Image.asset(
-                                  categories[index]['icon'],
-                                  width: 30,
-                                  height: 30,
-                                  fit: BoxFit.contain,
-                                ),
-                              )),
-                          Text(
-                            categories[index]['name'],
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            })),
-          ),
-          SizedBox(
-            height: 50,
-          ),
+        ),
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: Column(
@@ -166,7 +105,25 @@ class _CreatBudgetPageState extends State<CreatBudgetPage> {
                       hintText: "Alcancia virtual", border: InputBorder.none),
                 ),
                 SizedBox(
-                  height: 20,
+                  height: 15,
+                ),
+                Text(
+                  "Agrega una descripción",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                      color: Color(0xff67727d)),
+                ),
+                TextField(
+                  controller: _budgetDescripcion,
+                  cursorColor: black,
+                  style: TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.bold, color: black),
+                  decoration: InputDecoration(
+                      hintText: "Descripcion", border: InputBorder.none),
+                ),
+                SizedBox(
+                  height: 15,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

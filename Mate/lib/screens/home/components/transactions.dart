@@ -6,56 +6,59 @@ class RecentTransactions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 3 * (59 + 10),
-              child: ListView(
-                children: [
-                  RecentTransaction(
-                    title: "Netflix",
-                    image: "assets/images/netflix.png",
-                    description: "Entretenimiento",
-                    price: 10,
-                  ),
-                  RecentTransaction(
-                    title: "Netflix",
-                    image: "assets/images/netflix.png",
-                    description: "Entretenimiento",
-                    price: 10,
-                  ),
-                  RecentTransaction(
-                    title: "Netflix",
-                    image: "assets/images/netflix.png",
-                    description: "Entretenimiento",
-                    price: 10,
-                  ),
-                  RecentTransaction(
-                    title: "Netflix",
-                    image: "assets/images/netflix.png",
-                    description: "Entretenimiento",
-                    price: 10,
-                  ),
-                  RecentTransaction(
-                    title: "Netflix",
-                    image: "assets/images/netflix.png",
-                    description: "Entretenimiento",
-                    price: 10,
-                  ),
-                  RecentTransaction(
-                    title: "Netflix",
-                    image: "assets/images/netflix.png",
-                    description: "Entretenimiento",
-                    price: 10,
-                  ),
-                ],
-              ),
-            )
-          ],
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical:4),
+      
+        child: SingleChildScrollView(
+          
+          child: Column(
+            children: [
+              SizedBox(
+                height: 3 * (80 + 10),
+                child: ListView(
+                  children: [
+                    RecentTransaction(
+                      title: "Netflix",
+                      image: "assets/images/netflix.png",
+                      description: "Entretenimiento",
+                      price: 10,
+                    ),
+                    RecentTransaction(
+                      title: "Netflix",
+                      image: "assets/images/netflix.png",
+                      description: "Entretenimiento",
+                      price: 10,
+                    ),
+                    RecentTransaction(
+                      title: "Netflix",
+                      image: "assets/images/netflix.png",
+                      description: "Entretenimiento",
+                      price: 10,
+                    ),
+                    RecentTransaction(
+                      title: "Netflix",
+                      image: "assets/images/netflix.png",
+                      description: "Entretenimiento",
+                      price: 10,
+                    ),
+                    RecentTransaction(
+                      title: "Netflix",
+                      image: "assets/images/netflix.png",
+                      description: "Entretenimiento",
+                      price: 10,
+                    ),
+                    RecentTransaction(
+                      title: "Netflix",
+                      image: "assets/images/netflix.png",
+                      description: "Entretenimiento",
+                      price: 10,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
-      ),
+    
     );
   }
 }
