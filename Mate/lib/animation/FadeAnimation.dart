@@ -1,4 +1,4 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:simple_animations/simple_animations.dart';
 
 class FadeAnimation extends StatelessWidget {
@@ -25,4 +25,4 @@ class FadeAnimation extends StatelessWidget {
       child: child,
     );
   }
-}*/
+}

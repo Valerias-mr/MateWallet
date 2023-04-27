@@ -160,7 +160,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => HomeScreen(),
+                                      builder: (context) => HomeLoginPage(),
                                     ),
                                   );
                                 },

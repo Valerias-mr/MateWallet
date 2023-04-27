@@ -1,4 +1,5 @@
-/*import 'package:flutter/material.dart';
+import 'package:bankingapp/screens/home/home_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:bankingapp/animation/FadeAnimation.dart';
 
 class SignupPage extends StatelessWidget {
@@ -73,7 +74,14 @@ class SignupPage extends StatelessWidget {
                     child: MaterialButton(
                       minWidth: double.infinity,
                       height: 60,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeScreen(),
+                          ),
+                        );
+                      },
                       color: Colors.greenAccent,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -134,4 +142,3 @@ class SignupPage extends StatelessWidget {
     );
   }
 }
-*/

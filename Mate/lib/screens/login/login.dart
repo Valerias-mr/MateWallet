@@ -1,4 +1,5 @@
-/*import 'package:flutter/material.dart';
+import 'package:bankingapp/screens/home/home_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:bankingapp/animation/FadeAnimation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -108,7 +109,12 @@ class _LoginPageState extends State<LoginPage> {
                           child: MaterialButton(
                             minWidth: double.infinity,
                             height: 60,
-                            onPressed: _signInWithEmailAndPassword,
+                            onPressed: (){Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HomeScreen(),
+                                    ),
+                                  );},
                             color: Colors.greenAccent,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
@@ -182,4 +188,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-*/
