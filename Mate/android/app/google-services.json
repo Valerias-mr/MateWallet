@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "954192317422",
+    "firebase_url": "https://mate-5ada0-default-rtdb.firebaseio.com",
+    "project_id": "mate-5ada0",
+    "storage_bucket": "mate-5ada0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:954192317422:android:1c24c5bedf92eee5a49cff",
+        "android_client_info": {
+          "package_name": "com.example.bankingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "954192317422-5djkpt1ft5kmbhslkrochjpedm7qcjt6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhePPWWH7_FAhv4T9S0639J0mS57QAGGk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "954192317422-5djkpt1ft5kmbhslkrochjpedm7qcjt6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
