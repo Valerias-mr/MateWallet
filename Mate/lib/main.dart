@@ -1,3 +1,4 @@
+import 'package:bankingapp/screens/login/BancolombiaLoginPage.dart';
 import 'package:bankingapp/screens/login/HomeScreen.dart';
 import 'package:bankingapp/screens/login/login.dart';
 import 'package:bankingapp/screens/ahorro/root_app.dart';
@@ -39,7 +40,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(),
       debugShowCheckedModeBanner: false,
       title: 'Mate',
-      home: seenOnboard == true ? HomeScreen() : const OnboardingPage(),
+      home:
+          seenOnboard == true ? BancolombiaLoginPage() : const OnboardingPage(),
     );
   }
 }

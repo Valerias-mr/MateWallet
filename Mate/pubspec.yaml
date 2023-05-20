@@ -47,6 +47,8 @@ dependencies:
   flutter_icons_null_safety: ^1.1.0
   percent_indicator: ^4.2.3
   animated_bottom_navigation_bar: ^1.2.0
+  flutter_webview_plugin: ^0.4.0
+  webview_flutter: ^3.0.0
   #firebase_auth: ^3.3.3
   #firebase_core: ^1.10.4
 
