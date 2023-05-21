@@ -1,3 +1,4 @@
+import 'package:bankingapp/controllers/utils.dart';
 import 'package:bankingapp/main.dart';
 import 'package:bankingapp/screens/home/home_screen.dart';
 import 'package:bankingapp/screens/login/signup.dart';
@@ -29,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
           password: _passwordController.text.trim());
     } on FirebaseAuthException catch (e) {
       print(e);
+      Utils.showSnackBar(e.message);
     }
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }

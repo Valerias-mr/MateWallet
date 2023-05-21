@@ -1,3 +1,4 @@
+import 'package:bankingapp/controllers/utils.dart';
 import 'package:bankingapp/screens/login/BancolombiaLoginPage.dart';
 import 'package:bankingapp/screens/login/login.dart';
 import 'package:bankingapp/screens/login/signup.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scaffoldMessengerKey: Utils.messengerKey,
       theme: ThemeData(),
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
@@ -44,9 +46,9 @@ class MyApp extends StatelessWidget {
               stream: FirebaseAuth.instance.authStateChanges(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return SignupPage();
+                  return HomeScreen();
                 } else {
-                  return SignupPage();
+                  return LoginPage();
                 }
               })
           : const OnboardingPage(),

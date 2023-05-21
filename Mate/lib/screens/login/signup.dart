@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bankingapp/controllers/utils.dart';
 import 'package:bankingapp/main.dart';
 import 'package:bankingapp/screens/home/home_screen.dart';
 import 'package:bankingapp/screens/login/login.dart';
@@ -17,20 +18,26 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final formKey = GlobalKey<FormState>();
+
+  final _nameController = TextEditingController();
+  final _typeIdController = TextEditingController();
+  final _idController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   @override
   void dispose() {
+    _nameController.dispose();
+    _idController.dispose();
+    _typeIdController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController();
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
@@ -74,8 +81,7 @@ class _SignupPageState extends State<SignupPage> {
                       FadeAnimation(
                           1.2,
                           makeInput(
-                            label: "Nombre",
-                          )),
+                              label: "Nombre", controller: _nameController)),
                       FadeAnimation(
                           1.2,
                           makeEmailInput(
@@ -85,12 +91,12 @@ class _SignupPageState extends State<SignupPage> {
                           1.2,
                           makeSelectorInput(
                               label: "Tipo de Documento",
-                              controller: controller)),
+                              controller: _typeIdController)),
                       FadeAnimation(
                           1.2,
                           makeInput(
-                            label: "Número de documento",
-                          )),
+                              label: "Número de documento",
+                              controller: _idController)),
                       FadeAnimation(
                           1.3,
                           makepasswordInput(
@@ -167,19 +173,34 @@ class _SignupPageState extends State<SignupPage> {
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => Center(
-              child: CircularProgressIndicator(),
-            ));
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
 
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
+      final userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      // Obtener el ID único del usuario
+      final userId = userCredential.user!.uid;
+
+      // Guardar los datos adicionales en Firestore
+      await FirebaseFirestore.instance.collection('users').doc(userId).set({
+        'name': _nameController.text.trim(),
+        'typeId': _typeIdController.text.trim(),
+        'documentNumber': _idController.text.trim(),
+      });
     } on FirebaseAuthException catch (e) {
       print(e);
+      Utils.showSnackBar(e.message);
     }
+
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 
