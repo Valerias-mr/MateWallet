@@ -1,6 +1,6 @@
 import 'package:bankingapp/controllers/utils.dart';
 import 'package:bankingapp/main.dart';
-import 'package:bankingapp/screens/home/home_screen.dart';
+import 'package:bankingapp/screens/login/ForgotPasswordPage.dart';
 import 'package:bankingapp/screens/login/signup.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
@@ -137,6 +137,30 @@ class _LoginPageState extends State<LoginPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
+                          Text("¿Olvidaste tu contraseña?"),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ForgotPasswordPage()),
+                              );
+                            },
+                            child: Text(
+                              " Recuperar contraseña",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
+                  FadeAnimation(
+                      1.5,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
                           Text("No tienes una cuenta?"),
                           GestureDetector(
                             onTap: () {
@@ -155,7 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ],
-                      ))
+                      )),
                 ],
               ),
             ),
