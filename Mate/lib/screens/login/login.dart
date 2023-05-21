@@ -1,4 +1,7 @@
+import 'package:bankingapp/main.dart';
 import 'package:bankingapp/screens/home/home_screen.dart';
+import 'package:bankingapp/screens/login/signup.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:bankingapp/animation/FadeAnimation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,17 +15,22 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  Future<void> _signInWithEmailAndPassword() async {
+  Future signIn() async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Center(
+              child: CircularProgressIndicator(),
+            ));
+
     try {
-      final auth = FirebaseAuth.instance;
-      final userCredential = await auth.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim());
-      final user = userCredential.user;
-      // Do something with user
     } on FirebaseAuthException catch (e) {
-      // Handle error
+      print(e);
     }
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 
   @override
@@ -81,11 +89,11 @@ class _LoginPageState extends State<LoginPage> {
                       children: <Widget>[
                         FadeAnimation(
                             1.2,
-                            makeInput(
+                            makeEmailInput(
                                 label: "Email", controller: _emailController)),
                         FadeAnimation(
                             1.3,
-                            makeInput(
+                            makepasswordInput(
                                 label: "Contraseña",
                                 obscureText: true,
                                 controller: _passwordController)),
@@ -109,12 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: MaterialButton(
                             minWidth: double.infinity,
                             height: 60,
-                            onPressed: (){Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => HomeScreen(),
-                                    ),
-                                  );},
+                            onPressed: signIn,
                             color: Colors.greenAccent,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
@@ -133,10 +136,21 @@ class _LoginPageState extends State<LoginPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text("No tienes una cuenta?"),
-                          Text(
-                            "Registrate",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 18),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SignupPage()),
+                              );
+                            },
+                            child: Text(
+                              " Registrate",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                              ),
+                            ),
                           ),
                         ],
                       ))
@@ -175,14 +189,82 @@ class _LoginPageState extends State<LoginPage> {
           obscureText: obscureText,
           decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey)),
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey)),
+            enabledBorder:
+                OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+            border:
+                OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           ),
         ),
         SizedBox(
           height: 30,
+        ),
+      ],
+    );
+  }
+
+  Widget makeEmailInput({label, entrada, obscureText = false, controller}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          label,
+          style: TextStyle(
+              fontSize: 15, fontWeight: FontWeight.w400, color: Colors.black87),
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (email) => email != null && !EmailValidator.validate(email)
+              ? "Ingresa un correo valido"
+              : null,
+          controller: controller,
+          obscureText: obscureText,
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey.withOpacity(0.4))),
+            border: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey.withOpacity(0.4))),
+          ),
+        ),
+        SizedBox(
+          height: 15,
+        ),
+      ],
+    );
+  }
+
+  Widget makepasswordInput({label, entrada, obscureText = false, controller}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          label,
+          style: TextStyle(
+              fontSize: 15, fontWeight: FontWeight.w400, color: Colors.black87),
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (value) => value != null && value.length < 6
+              ? "Ingresa mínimo 6 caracteres"
+              : null,
+          controller: controller,
+          obscureText: obscureText,
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey.withOpacity(0.4))),
+            border: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey.withOpacity(0.4))),
+          ),
+        ),
+        SizedBox(
+          height: 15,
         ),
       ],
     );

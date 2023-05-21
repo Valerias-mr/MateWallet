@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'components/body.dart';
@@ -17,18 +18,21 @@ class HomeScreen extends StatelessWidget {
   }
 
   AppBar buildAppBar() {
+    final user = FirebaseAuth.instance.currentUser!;
+
     return AppBar(
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       elevation: 0,
       centerTitle: false,
       title: Container(
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-        child: CircleAvatar(
-          radius: 20.0,
-          backgroundImage: AssetImage("assets/images/walmart.png"),
-          backgroundColor: Color.fromARGB(255, 255, 255, 255),
-        ),
-      ),
+          margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          child: Row(children: [
+            CircleAvatar(
+              radius: 20.0,
+              backgroundImage: AssetImage("assets/images/walmart.png"),
+              backgroundColor: Color.fromARGB(255, 255, 255, 255),
+            ),
+          ])),
       actions: [
         Container(
           margin: EdgeInsets.symmetric(horizontal: 16),

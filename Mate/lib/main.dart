@@ -1,22 +1,18 @@
 import 'package:bankingapp/screens/login/BancolombiaLoginPage.dart';
-import 'package:bankingapp/screens/login/HomeScreen.dart';
 import 'package:bankingapp/screens/login/login.dart';
-import 'package:bankingapp/screens/ahorro/root_app.dart';
+import 'package:bankingapp/screens/login/signup.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:bankingapp/screens/pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'firebase_options.dart';
 
 bool? seenOnboard;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  ;
+  await Firebase.initializeApp();
 
   // show status bar
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
@@ -31,6 +27,8 @@ void main() async {
   runApp(const MyApp());
 }
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -38,10 +36,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(),
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Mate',
-      home:
-          seenOnboard == true ? BancolombiaLoginPage() : const OnboardingPage(),
+      home: seenOnboard == true
+          ? StreamBuilder<User?>(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return SignupPage();
+                } else {
+                  return SignupPage();
+                }
+              })
+          : const OnboardingPage(),
     );
   }
 }

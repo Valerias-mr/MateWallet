@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:bankingapp/app_styles.dart';
 import 'package:bankingapp/size_configs.dart';
-import 'package:bankingapp/models/onboarding_data.dart';
 import 'package:lottie/lottie.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../../Api/Authorization_Access_Authorization.dart';
-import '../../widgets/widgets.dart';
 
 class BancolombiaLoginPage extends StatefulWidget {
   const BancolombiaLoginPage({Key? key}) : super(key: key);
