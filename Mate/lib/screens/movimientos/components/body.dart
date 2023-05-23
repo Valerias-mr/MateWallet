@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bankingapp/screens/movimientos/components/card_section.dart';
 import 'package:bankingapp/screens/movimientos/components/recent_transactions.dart';
-import 'package:bankingapp/screens/home/components/card.dart';
 
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);

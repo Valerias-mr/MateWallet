@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:bankingapp/controllers/utils.dart';
 import 'package:bankingapp/main.dart';
-import 'package:bankingapp/screens/home/home_screen.dart';
 import 'package:bankingapp/screens/login/login.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bankingapp/animation/FadeAnimation.dart';
