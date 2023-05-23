@@ -49,9 +49,6 @@ dependencies:
   animated_bottom_navigation_bar: ^1.2.0
   webview_flutter: ^3.0.4
   email_validator: ^2.0.1
-  oauth2: ^2.0.0
-  oauth2_client: ^3.0.0
-  flutter_appauth: ^6.0.0
 
 dev_dependencies:
   flutter_test:
