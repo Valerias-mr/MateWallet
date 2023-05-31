@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bankingapp/controllers/utils.dart';
 import 'package:bankingapp/main.dart';
 import 'package:bankingapp/screens/home/home_screen.dart';
+import 'package:bankingapp/screens/login/Authenticate.dart';
 import 'package:bankingapp/screens/login/login.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +11,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bankingapp/animation/FadeAnimation.dart';
+
 
 class SignupPage extends StatefulWidget {
   @override
@@ -59,119 +61,110 @@ class _SignupPageState extends State<SignupPage> {
       ),
       body: SingleChildScrollView(
         child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 40),
-            height: MediaQuery.of(context).size.height - 50,
-            width: double.infinity,
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      FadeAnimation(
-                          1,
-                          Text(
-                            "Crear una cuenta",
-                            style: TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold),
-                          )),
-                    ],
+          padding: EdgeInsets.symmetric(horizontal: 40),
+          height: MediaQuery.of(context).size.height - 50,
+          width: double.infinity,
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Text(
+                      "Crear una cuenta",
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    makeInput(
+                      label: "Nombre",
+                      controller: _nameController,
+                    ),
+                    makeInputCelular(
+                      label: "Celular",
+                      controller: _celularController,
+                    ),
+                    makeEmailInput(
+                      label: "Correo electrónico",
+                      controller: _emailController,
+                    ),
+                    makeSelectorInput(
+                      label: "Tipo de Documento",
+                      controller: _typeIdController,
+                    ),
+                    makeInput(
+                      label: "Número de documento",
+                      controller: _idController,
+                    ),
+                    makepasswordInput(
+                      label: "Contraseña",
+                      controller: _passwordController,
+                    ),
+                    makepasswordInput(
+                      label: "Confirmar Contraseña",
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 3, left: 3),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border(
+                      bottom: BorderSide(color: Colors.black),
+                      top: BorderSide(color: Colors.black),
+                      left: BorderSide(color: Colors.black),
+                      right: BorderSide(color: Colors.black),
+                    ),
                   ),
-                  Column(
-                    children: <Widget>[
-                      FadeAnimation(
-                          1.2,
-                          makeInput(
-                              label: "Nombre", controller: _nameController)),
-                      FadeAnimation(
-                          1.2,
-                          makeInputCelular(
-                              label: "Celular",
-                              controller: _celularController)),
-                      FadeAnimation(
-                          1.2,
-                          makeEmailInput(
-                              label: "Correo electronico",
-                              controller: _emailController)),
-                      FadeAnimation(
-                          1.2,
-                          makeSelectorInput(
-                              label: "Tipo de Documento",
-                              controller: _typeIdController)),
-                      FadeAnimation(
-                          1.2,
-                          makeInput(
-                              label: "Número de documento",
-                              controller: _idController)),
-                      FadeAnimation(
-                          1.3,
-                          makepasswordInput(
-                            label: "Contraseña",
-                            controller: _passwordController,
-                            obscureText: true,
-                          )),
-                      FadeAnimation(
-                          1.4,
-                          makepasswordInput(
-                              label: "Confirmar Contraseña",
-                              obscureText: true)),
-                    ],
+                  child: MaterialButton(
+                    minWidth: double.infinity,
+                    height: 60,
+                    onPressed: signUp,
+                    color: Colors.yellow,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Text(
+                      "Registrar cuenta",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
+                    ),
                   ),
-                  FadeAnimation(
-                      1.5,
-                      Container(
-                        padding: EdgeInsets.only(top: 3, left: 3),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            border: Border(
-                              bottom: BorderSide(color: Colors.black),
-                              top: BorderSide(color: Colors.black),
-                              left: BorderSide(color: Colors.black),
-                              right: BorderSide(color: Colors.black),
-                            )),
-                        child: MaterialButton(
-                          minWidth: double.infinity,
-                          height: 60,
-                          onPressed: signUp,
-                          color: Colors.yellow,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50)),
-                          child: Text(
-                            "Registrar cuenta",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 18),
-                          ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text("¿Ya tienes una cuenta?"),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      },
+                      child: Text(
+                        " Inicia sesión",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
                         ),
-                      )),
-                  FadeAnimation(
-                      1.6,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text("¿Ya tienes una cuenta?"),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginPage()),
-                              );
-                            },
-                            child: Text(
-                              " Inicia sesión",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )),
-                ],
-              ),
-            )),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -179,6 +172,7 @@ class _SignupPageState extends State<SignupPage> {
   Future signUp() async {
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -188,8 +182,8 @@ class _SignupPageState extends State<SignupPage> {
     );
 
     try {
-      final userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
@@ -204,45 +198,52 @@ class _SignupPageState extends State<SignupPage> {
         'documentNumber': _idController.text.trim(),
         'Phone_Number': _celularController.text.trim(),
       });
+
+      // Mostrar pantalla de verificación de OTP
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Authenticate()),
+      );
     } on FirebaseAuthException catch (e) {
       print(e);
       Utils.showSnackBar(e.message);
     }
 
-    navigatorKey.currentState!.popUntil((route) => route.isFirst);
+    Navigator.pop(context); // Cerrar el diálogo de progreso
+    Navigator.popUntil(context, ModalRoute.withName('/')); // Cerrar todas las pantallas y volver a la pantalla de inicio
   }
 
-  Widget makeInput({label, entrada, obscureText = false, controller}) {
+  Widget makeInput({label, controller}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
           label,
           style: TextStyle(
-              fontSize: 15, fontWeight: FontWeight.w400, color: Colors.black87),
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: Colors.black87,
+          ),
         ),
-        SizedBox(
-          height: 5,
-        ),
-        TextField(
+        SizedBox(height: 5),
+        TextFormField(
           controller: controller,
-          obscureText: obscureText,
           decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
             enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.4))),
+              borderSide: BorderSide(color: Colors.grey.withOpacity(0.4)),
+            ),
             border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.4))),
+              borderSide: BorderSide(color: Colors.grey.withOpacity(0.4)),
+            ),
           ),
         ),
-        SizedBox(
-          height: 15,
-        ),
+        SizedBox(height: 15),
       ],
     );
   }
 
-  Widget makeSelectorInput({label, entrada, obscureText = false, controller}) {
+ Widget makeSelectorInput({label, entrada, obscureText = false, controller}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -318,41 +319,41 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  Widget makeEmailInput({label, entrada, obscureText = false, controller}) {
+  Widget makeEmailInput({label, controller}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
           label,
           style: TextStyle(
-              fontSize: 15, fontWeight: FontWeight.w400, color: Colors.black87),
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: Colors.black87,
+          ),
         ),
-        SizedBox(
-          height: 5,
-        ),
+        SizedBox(height: 5),
         TextFormField(
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (email) => email != null && !EmailValidator.validate(email)
-              ? "Ingresa un correo valido"
+              ? "Ingresa un correo válido"
               : null,
           controller: controller,
-          obscureText: obscureText,
           decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
             enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.4))),
+              borderSide: BorderSide(color: Colors.grey.withOpacity(0.4)),
+            ),
             border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.4))),
+              borderSide: BorderSide(color: Colors.grey.withOpacity(0.4)),
+            ),
           ),
         ),
-        SizedBox(
-          height: 15,
-        ),
+        SizedBox(height: 15),
       ],
     );
   }
 
-  Widget makeInputCelular({label, entrada, obscureText = false, controller}) {
+  Widget makeInputCelular({label, controller}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -371,19 +372,12 @@ class _SignupPageState extends State<SignupPage> {
             // Validar que el número de celular tenga 10 dígitos
             if (phone == null || phone.isEmpty) {
               return 'Ingrese un número de celular';
-            } else if (phone.length != 10) {
+            } else if (phone.length != 13) {
               return 'El número de celular debe tener 10 dígitos';
             }
 
-            // Validar que el número de celular inicie con el prefijo colombiano
-            if (!phone.startsWith('3')) {
-              return 'El número de celular debe iniciar con el prefijo colombiano (+57)';
-            }
-
             // Validar que el número de celular contenga solo dígitos
-            if (!RegExp(r'^[0-9]+$').hasMatch(phone)) {
-              return 'El número de celular solo puede contener dígitos';
-            }
+            
 
             return null;
           },
@@ -404,36 +398,37 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  Widget makepasswordInput({label, entrada, obscureText = false, controller}) {
+  Widget makepasswordInput({label, controller}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
           label,
           style: TextStyle(
-              fontSize: 15, fontWeight: FontWeight.w400, color: Colors.black87),
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: Colors.black87,
+          ),
         ),
-        SizedBox(
-          height: 5,
-        ),
+        SizedBox(height: 5),
         TextFormField(
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (value) => value != null && value.length < 6
               ? "Ingresa mínimo 6 caracteres"
               : null,
           controller: controller,
-          obscureText: obscureText,
+          obscureText: true,
           decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
             enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.4))),
+              borderSide: BorderSide(color: Colors.grey.withOpacity(0.4)),
+            ),
             border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.4))),
+              borderSide: BorderSide(color: Colors.grey.withOpacity(0.4)),
+            ),
           ),
         ),
-        SizedBox(
-          height: 15,
-        ),
+        SizedBox(height: 15),
       ],
     );
   }
