@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 class RecentTransactionsCardCreate extends StatelessWidget {
   final String title;
   final String image;
-  final String description;
+  final String category;
   final int price;
 
   const RecentTransactionsCardCreate({
     Key? key,
     required this.title,
     required this.image,
-    required this.description,
+    required this.category,
     required this.price,
   }) : super(key: key);
 
@@ -23,7 +23,7 @@ class RecentTransactionsCardCreate extends StatelessWidget {
           RecentTransaction(
             title: title,
             image: "assets/images/netflix.png",
-            description: description,
+            category: category,
             price: price,
           ),
         ],
@@ -33,15 +33,17 @@ class RecentTransactionsCardCreate extends StatelessWidget {
 }
 
 class RecentTransaction extends StatelessWidget {
-  const RecentTransaction({
-    Key? key,
-    required this.image,
-    required this.title,
-    required this.description,
-    required this.price,
-  }) : super(key: key);
+  const RecentTransaction(
+      {Key? key,
+      required this.image,
+      required this.title,
+      required this.category,
+      required this.price,
+      this.description})
+      : super(key: key);
 
-  final String image, title, description;
+  final String image, title, category;
+  final String? description;
   final int price;
 
   @override
@@ -72,7 +74,7 @@ class RecentTransaction extends StatelessWidget {
                   ),
                   SizedBox(height: 2),
                   Text(
-                    description,
+                    category,
                     style: TextStyle(color: Colors.grey),
                   ),
                 ],

@@ -30,6 +30,7 @@ class _SignupPageState extends State<SignupPage> {
   void dispose() {
     _nameController.dispose();
     _idController.dispose();
+    _celularController.dispose();
     _typeIdController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -201,6 +202,7 @@ class _SignupPageState extends State<SignupPage> {
         'name': _nameController.text.trim(),
         'typeId': _typeIdController.text.trim(),
         'documentNumber': _idController.text.trim(),
+        'Phone_Number': _celularController.text.trim(),
       });
     } on FirebaseAuthException catch (e) {
       print(e);

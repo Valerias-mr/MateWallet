@@ -1,3 +1,4 @@
+import 'package:bankingapp/screens/gestion_gastos/edit_gestion.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,45 +10,30 @@ class RecentTransactionsCardsH2 extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 3 * (60),
-              child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(user
-                        .uid) // Reemplaza 'userId' con el ID del usuario actualmente logeado
-                    .collection('cards')
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  }
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  }
-
-                  if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-                    return Text('No hay transacciones disponibles.');
-                  }
-
-                  final cards = snapshot.data!.docs;
-
-                  return ListView.builder(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    itemCount: cards.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final card = cards[index];
-
-                      return StreamBuilder<QuerySnapshot>(
-                        stream: card.reference
-                            .collection('transactions')
+    return GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EditTransaction(),
+            ),
+          );
+        },
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 3 * (60),
+                  child: ListView(
+                    children: [
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(user
+                                .uid) // Reemplaza 'userId' con el ID del usuario actualmente logeado
+                            .collection('cards')
                             .snapshots(),
                         builder: (BuildContext context,
                             AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -60,59 +46,96 @@ class RecentTransactionsCardsH2 extends StatelessWidget {
                             return CircularProgressIndicator();
                           }
 
-                          if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-                            return Text('No hay transacciones disponibles.');
-                          }
-
-                          final transactions = snapshot.data!.docs;
+                          /*
+                      if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
+                        return Text('No hay transacciones disponibles.');
+                      }
+*/
+                          final cards = snapshot.data!.docs;
 
                           return ListView.builder(
-                            physics: AlwaysScrollableScrollPhysics(),
+                            physics: NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
-                            itemCount: transactions.length,
+                            itemCount: cards.length,
                             itemBuilder: (BuildContext context, int index) {
-                              final transaction = transactions[index];
+                              final card = cards[index];
 
-                              // Obtener los valores de la transacción
-                              final data =
-                                  transaction.data() as Map<String, dynamic>;
-                              final title = data['title'] ?? '';
-                              final image = "assets/images/netflix.png";
-                              final description = data['description'] ?? '';
-                              final price = data['price'] ?? 0;
+                              return StreamBuilder<QuerySnapshot>(
+                                stream: card.reference
+                                    .collection('transactions')
+                                    .snapshots(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                                  if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  }
 
-                              return RecentTransaction(
-                                title: title,
-                                image: image,
-                                description: description,
-                                price: price,
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  }
+
+                                  /*
+                              if (snapshot.hasData &&
+                                  snapshot.data!.docs.isEmpty) {
+                                return Text(
+                                    'No hay transacciones disponibles.');
+                              }*/
+
+                                  final transactions = snapshot.data!.docs;
+
+                                  return ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: transactions.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      final transaction = transactions[index];
+
+                                      // Obtener los valores de la transacción
+                                      final data = transaction.data()
+                                          as Map<String, dynamic>;
+                                      final title = data['title'] ?? '';
+                                      final image = "assets/images/netflix.png";
+                                      final description =
+                                          data['description'] ?? '';
+                                      final price = data['price'] ?? 0;
+
+                                      return RecentTransaction(
+                                        title: title,
+                                        image: image,
+                                        description: description,
+                                        price: price,
+                                      );
+                                    },
+                                  );
+                                },
                               );
                             },
                           );
                         },
-                      );
-                    },
-                  );
-                },
-              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }
 
 class RecentTransaction extends StatelessWidget {
   const RecentTransaction({
-    Key? key,
-    required this.image,
     required this.title,
+    required this.image,
     required this.description,
     required this.price,
-  }) : super(key: key);
+  });
 
-  final String image, title, description;
+  final String title;
+  final String image;
+  final String description;
   final int price;
 
   @override

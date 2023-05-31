@@ -14,7 +14,9 @@ class RecentTransactionSection extends StatelessWidget {
               topLeft: Radius.circular(30), topRight: Radius.circular(30))),
       child: Stack(
         children: [
-          RecentTransactionsCardsH2(),
+          SingleChildScrollView(
+            child: RecentTransactionsCardsH2(),
+          )
         ],
       ),
     );
