@@ -1,6 +1,6 @@
 import 'package:bankingapp/controllers/utils.dart';
 import 'package:bankingapp/screens/login/BancolombiaLoginPage.dart';
-import 'package:bankingapp/screens/login/BancolombiaLoginPageAuthenticate.dart';
+import 'package:bankingapp/screens/login/Authenticate.dart';
 import 'package:bankingapp/screens/login/HomeScreen.dart';
 import 'package:bankingapp/screens/login/cardRegistration.dart';
 import 'package:bankingapp/screens/login/login.dart';
