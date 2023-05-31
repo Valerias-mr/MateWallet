@@ -12,81 +12,91 @@ class RecentTransactionsCardsH2 extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       child: SingleChildScrollView(
-        child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('users')
-              .doc(user
-                  .uid) // Reemplaza 'userId' con el ID del usuario actualmente logeado
-              .collection('cards')
-              .snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            }
+        child: Column(
+          children: [
+            SizedBox(
+              height: 3 * (60),
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(user
+                        .uid) // Reemplaza 'userId' con el ID del usuario actualmente logeado
+                    .collection('cards')
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
 
-            if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-              return Text('No hay transacciones disponibles.');
-            }
+                  if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
+                    return Text('No hay transacciones disponibles.');
+                  }
 
-            final cards = snapshot.data!.docs;
+                  final cards = snapshot.data!.docs;
 
-            return ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: cards.length,
-              itemBuilder: (BuildContext context, int index) {
-                final card = cards[index];
+                  return ListView.builder(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    itemCount: cards.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final card = cards[index];
 
-                return StreamBuilder<QuerySnapshot>(
-                  stream: card.reference.collection('transactions').snapshots(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    }
+                      return StreamBuilder<QuerySnapshot>(
+                        stream: card.reference
+                            .collection('transactions')
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
 
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          }
 
-                    if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
-                      return Text('No hay transacciones disponibles.');
-                    }
+                          if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
+                            return Text('No hay transacciones disponibles.');
+                          }
 
-                    final transactions = snapshot.data!.docs;
+                          final transactions = snapshot.data!.docs;
 
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: transactions.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final transaction = transactions[index];
+                          return ListView.builder(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: transactions.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final transaction = transactions[index];
 
-                        // Obtener los valores de la transacción
-                        final data = transaction.data() as Map<String, dynamic>;
-                        final title = data['title'] ?? '';
-                        final image = "assets/images/netflix.png";
-                        final description = data['description'] ?? '';
-                        final price = data['price'] ?? 0;
+                              // Obtener los valores de la transacción
+                              final data =
+                                  transaction.data() as Map<String, dynamic>;
+                              final title = data['title'] ?? '';
+                              final image = "assets/images/netflix.png";
+                              final description = data['description'] ?? '';
+                              final price = data['price'] ?? 0;
 
-                        return RecentTransaction(
-                          title: title,
-                          image: image,
-                          description: description,
-                          price: price,
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-            );
-          },
+                              return RecentTransaction(
+                                title: title,
+                                image: image,
+                                description: description,
+                                price: price,
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

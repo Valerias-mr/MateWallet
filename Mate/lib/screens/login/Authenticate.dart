@@ -4,16 +4,14 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter_verification_code/flutter_verification_code.dart';
 import 'dart:async';
 
-class BancolombiaLoginPageAuthenticate extends StatefulWidget {
-  const BancolombiaLoginPageAuthenticate({Key? key}) : super(key: key);
+class Authenticate extends StatefulWidget {
+  const Authenticate({Key? key}) : super(key: key);
 
   @override
-  _BancolombiaLoginPageAuthenticateState createState() =>
-      _BancolombiaLoginPageAuthenticateState();
+  _AuthenticateState createState() => _AuthenticateState();
 }
 
-class _BancolombiaLoginPageAuthenticateState
-    extends State<BancolombiaLoginPageAuthenticate> {
+class _AuthenticateState extends State<Authenticate> {
   bool _isResendAgain = false;
   bool _isVerified = false;
   bool _isLoading = false;

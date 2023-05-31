@@ -21,6 +21,7 @@ class _SignupPageState extends State<SignupPage> {
 
   final _nameController = TextEditingController();
   final _typeIdController = TextEditingController();
+  final _celularController = TextEditingController();
   final _idController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -82,6 +83,11 @@ class _SignupPageState extends State<SignupPage> {
                           1.2,
                           makeInput(
                               label: "Nombre", controller: _nameController)),
+                      FadeAnimation(
+                          1.2,
+                          makeInputCelular(
+                              label: "Celular",
+                              controller: _celularController)),
                       FadeAnimation(
                           1.2,
                           makeEmailInput(
@@ -340,6 +346,58 @@ class _SignupPageState extends State<SignupPage> {
         SizedBox(
           height: 15,
         ),
+      ],
+    );
+  }
+
+  Widget makeInputCelular({label, entrada, obscureText = false, controller}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: Colors.black87,
+          ),
+        ),
+        SizedBox(height: 5),
+        TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (phone) {
+            // Validar que el número de celular tenga 10 dígitos
+            if (phone == null || phone.isEmpty) {
+              return 'Ingrese un número de celular';
+            } else if (phone.length != 10) {
+              return 'El número de celular debe tener 10 dígitos';
+            }
+
+            // Validar que el número de celular inicie con el prefijo colombiano
+            if (!phone.startsWith('3')) {
+              return 'El número de celular debe iniciar con el prefijo colombiano (+57)';
+            }
+
+            // Validar que el número de celular contenga solo dígitos
+            if (!RegExp(r'^[0-9]+$').hasMatch(phone)) {
+              return 'El número de celular solo puede contener dígitos';
+            }
+
+            return null;
+          },
+          controller: controller,
+          keyboardType: TextInputType.phone,
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey.withOpacity(0.4)),
+            ),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey.withOpacity(0.4)),
+            ),
+          ),
+        ),
+        SizedBox(height: 15),
       ],
     );
   }

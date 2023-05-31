@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
                 if (snapshot.connectionState == ConnectionState.active) {
                   if (snapshot.hasData) {
                     final user = snapshot.data;
-                    // Verificar si el usuario tiene tarjetas registradas
+                    // Verificar si el usuario está autenticado mediante código OTP con Firebase
                     if (user != null) {
                       return StreamBuilder<QuerySnapshot>(
                         stream: FirebaseFirestore.instance
@@ -79,6 +79,9 @@ class MyApp extends StatelessWidget {
                           return CircularProgressIndicator();
                         },
                       );
+                    } else {
+                      // El usuario no está autenticado, redirígelo a la página de autenticación con código OTP
+                      return Authenticate();
                     }
                   }
                   // Si el usuario no está registrado, redirígelo a la página de inicio de sesión
