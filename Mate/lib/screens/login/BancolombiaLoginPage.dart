@@ -3,7 +3,6 @@ import 'package:bankingapp/app_styles.dart';
 import 'package:bankingapp/size_configs.dart';
 import 'package:lottie/lottie.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import '../../Api/Authorization_Access_Authorization.dart';
 
 class BancolombiaLoginPage extends StatefulWidget {
   const BancolombiaLoginPage({Key? key}) : super(key: key);
@@ -112,16 +111,6 @@ class BancolombiaButton extends StatelessWidget {
   }
 
   void _openWebViewer(BuildContext context) {
-    obtenerAccessToken().then((accessToken) {
-      if (accessToken != null) {
-        // La solicitud fue exitosa, se obtuvo un access token
-        print('Access Token: $accessToken');
-      } else {
-        // La solicitud falló, no se obtuvo un access token
-        print('No se pudo obtener el Access Token');
-      }
-    });
-
     Navigator.of(context).push(MaterialPageRoute(
       builder: (BuildContext context) => Scaffold(
         appBar: AppBar(

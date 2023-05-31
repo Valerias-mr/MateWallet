@@ -127,7 +127,7 @@ class _SignupPageState extends State<SignupPage> {
                           minWidth: double.infinity,
                           height: 60,
                           onPressed: signUp,
-                          color: Colors.greenAccent,
+                          color: Colors.yellow,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(50)),
@@ -257,20 +257,20 @@ class _SignupPageState extends State<SignupPage> {
           },
           items: [
             DropdownMenuItem<String>(
-              value: 'C.C',
-              child: Text('C.C'),
+              value: 'CC',
+              child: Text('CC'),
             ),
             DropdownMenuItem<String>(
-              value: 'C.E',
-              child: Text('C.E'),
+              value: 'CE',
+              child: Text('CE'),
             ),
             DropdownMenuItem<String>(
               value: 'NIT',
               child: Text('NIT'),
             ),
             DropdownMenuItem<String>(
-              value: 'T.I',
-              child: Text('T.I'),
+              value: 'TI',
+              child: Text('TI'),
             ),
             DropdownMenuItem<String>(
               value: 'PAS',

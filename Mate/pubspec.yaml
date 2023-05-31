@@ -49,6 +49,12 @@ dependencies:
   animated_bottom_navigation_bar: ^1.2.0
   webview_flutter: ^3.0.4
   email_validator: ^2.0.1
+  requests: ^4.7.0
+  dio: ^5.1.2
+  flutter_verification_code: ^1.1.6
+  animate_do: ^3.0.2
+  carousel_slider: ^4.2.1
+  flutter_swiper_null_safety: ^1.0.2
 
 dev_dependencies:
   flutter_test:

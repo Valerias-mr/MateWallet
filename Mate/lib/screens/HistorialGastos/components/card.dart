@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class CardComponent extends StatelessWidget {
+class CardComponentMovements extends StatelessWidget {
   final DocumentSnapshot document;
 
-  const CardComponent({Key? key, required this.document}) : super(key: key);
+  const CardComponentMovements({Key? key, required this.document})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class CardComponent extends StatelessWidget {
       Colors.blue,
       Colors.red,
       Colors.green,
-      Colors.yellow,
+      Color.fromARGB(136, 255, 235, 59),
     ]; // Lista de colores para las tarjetas
     final Color color = cardColors[Random().nextInt(cardColors.length)];
     final String cardNumber = document['cardNumber'];
@@ -29,8 +30,8 @@ class CardComponent extends StatelessWidget {
       child: Stack(
         children: [
           Container(
-            height: size.height * 0.2,
-            width: size.width * 0.8,
+            height: size.height * 0.3,
+            width: size.width * 1.6,
             decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.all(Radius.circular(16))),

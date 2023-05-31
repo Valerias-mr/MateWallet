@@ -1,28 +1,24 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CardComponent extends StatelessWidget {
-  final DocumentSnapshot document;
+  final Color color;
+  final String cardNumber;
+  final String expiryDate;
+  final String balance;
 
-  const CardComponent({Key? key, required this.document}) : super(key: key);
+  const CardComponent({
+    Key? key,
+    required this.color,
+    required this.cardNumber,
+    required this.expiryDate,
+    required this.balance,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-
-    final List<Color> cardColors = [
-      Colors.blue,
-      Colors.red,
-      Colors.green,
-      Colors.yellow,
-    ]; // Lista de colores para las tarjetas
-    final Color color = cardColors[Random().nextInt(cardColors.length)];
-    final String cardNumber = document['cardNumber'];
-    final String expiryDate = document['expiryDate'];
-    final String balance = document['balance'];
 
     return Container(
       margin: EdgeInsets.only(right: 10),
@@ -32,8 +28,9 @@ class CardComponent extends StatelessWidget {
             height: size.height * 0.2,
             width: size.width * 0.8,
             decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.all(Radius.circular(16))),
+              color: color,
+              borderRadius: BorderRadius.all(Radius.circular(16)),
+            ),
           ),
           Positioned(
             top: 20,
@@ -42,18 +39,26 @@ class CardComponent extends StatelessWidget {
               children: [
                 SvgPicture.asset("assets/icons/mastercard.svg"),
                 SizedBox(width: 10),
-                Text(cardNumber,
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold)),
+                Text(
+                  cardNumber,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           ),
           Positioned(
             top: 25,
             right: 25,
-            child: Text(expiryDate,
-                style: TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold)),
+            child: Text(
+              expiryDate,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           Positioned(
             bottom: 25,
@@ -66,9 +71,10 @@ class CardComponent extends StatelessWidget {
                 Text(
                   "\$ $balance",
                   style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),

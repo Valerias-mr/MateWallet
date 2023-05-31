@@ -120,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                             minWidth: double.infinity,
                             height: 60,
                             onPressed: signIn,
-                            color: Colors.greenAccent,
+                            color: Colors.yellow,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50)),

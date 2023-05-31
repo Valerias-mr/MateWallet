@@ -1,9 +1,9 @@
 import 'package:bankingapp/screens/ahorro/budget_page.dart';
 import 'package:bankingapp/screens/gestion_gastos/daily_page.dart';
-import 'package:bankingapp/screens/movimientos/movimientos.dart';
 import 'package:bankingapp/screens/ahorro/root_app.dart';
 import 'package:bankingapp/screens/analisis/stats_page.dart';
 import 'package:flutter/material.dart';
+import '../../HistorialGastos/HomeMovimientos.dart';
 import 'item_action.dart';
 
 class ActionItems extends StatelessWidget {
