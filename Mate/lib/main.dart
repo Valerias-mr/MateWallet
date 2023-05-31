@@ -57,34 +57,42 @@ class MyApp extends StatelessWidget {
                     final user = snapshot.data;
                     // Verificar si el usuario está autenticado mediante código OTP con Firebase
                     if (user != null) {
-                      return StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(user.uid)
-                            .collection('cards')
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.active) {
-                            final cards = snapshot.data?.docs;
-                            if (cards != null && cards.isNotEmpty) {
-                              // El usuario tiene tarjetas registradas, redirígelo al home screen
-                              return HomeScreen();
-                            } else {
-                              // El usuario no tiene tarjetas registradas, redirígelo a la página de registro de tarjeta
-                              return onBoardingAddCard();
-                            }
-                          }
-                          // Mientras se carga la consulta a Firestore, puedes mostrar una pantalla de carga o algún indicador de progreso
-                          return CircularProgressIndicator();
-                        },
-                      );
+                      user.getIdTokenResult().then((tokenResult) {
+                        if (tokenResult.signInProvider == "phone") {
+                          // El usuario está autenticado por OTP, ver si tiene tarjetas registradas
+                          return StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(user.uid)
+                                .collection('cards')
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.active) {
+                                final cards = snapshot.data?.docs;
+                                if (cards != null && cards.isNotEmpty) {
+                                  // El usuario tiene tarjetas registradas, redirigir al home screen
+                                  return HomeScreen();
+                                } else {
+                                  // El usuario no tiene tarjetas registradas, redirigir a la página de registro de tarjeta
+                                  return onBoardingAddCard();
+                                }
+                              }
+                              // Mientras se carga la consulta a Firestore, puedes mostrar una pantalla de carga o algún indicador de progreso
+                              return CircularProgressIndicator();
+                            },
+                          );
+                        } else {
+                          // El usuario está logeado pero no está autenticado por OTP, redirigir a la página de autenticación con código OTP
+                          return Authenticate();
+                        }
+                      });
                     } else {
-                      // El usuario no está autenticado, redirígelo a la página de autenticación con código OTP
+                      // El usuario no está autenticado, redirigir a la página de autenticación con código OTP
                       return Authenticate();
                     }
                   }
-                  // Si el usuario no está registrado, redirígelo a la página de inicio de sesión
+                  // Si el usuario no está registrado, redirigir a la página de inicio de sesión
                   return LoginPage();
                 }
                 // Mientras se carga la autenticación, puedes mostrar una pantalla de carga o algún indicador de progreso
