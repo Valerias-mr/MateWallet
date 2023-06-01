@@ -4,6 +4,8 @@ class RecentTransactionsCardCreate extends StatelessWidget {
   final String title;
   final String image;
   final String category;
+  final String typeTransaction;
+
   final int price;
 
   const RecentTransactionsCardCreate({
@@ -12,6 +14,7 @@ class RecentTransactionsCardCreate extends StatelessWidget {
     required this.image,
     required this.category,
     required this.price,
+    required this.typeTransaction,
   }) : super(key: key);
 
   @override
@@ -25,6 +28,7 @@ class RecentTransactionsCardCreate extends StatelessWidget {
             image: "assets/images/netflix.png",
             category: category,
             price: price,
+            typeTransaction: typeTransaction,
           ),
         ],
       ),
@@ -39,10 +43,11 @@ class RecentTransaction extends StatelessWidget {
       required this.title,
       required this.category,
       required this.price,
+      required this.typeTransaction,
       this.description})
       : super(key: key);
 
-  final String image, title, category;
+  final String image, title, category, typeTransaction;
   final String? description;
   final int price;
 
@@ -82,7 +87,7 @@ class RecentTransaction extends StatelessWidget {
             ],
           ),
           Text(
-            "- \$$price",
+            "$typeTransaction \$$price",
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,

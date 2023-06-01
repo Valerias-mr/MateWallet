@@ -20,6 +20,7 @@ class TransactionCreate extends StatefulWidget {
 class _TransactionCreateState extends State<TransactionCreate> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _categoryController = TextEditingController();
+  TextEditingController _typeTransactionController = TextEditingController();
   TextEditingController _imageController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _priceController = TextEditingController();
@@ -28,14 +29,15 @@ class _TransactionCreateState extends State<TransactionCreate> {
   String recentImage = '';
   String recentDescription = '';
   String recentCategory = '';
+  String recenttypeTransaction = '';
 
   int recentPrice = 0;
 
   void _createTransaction() {
     final String title = _titleController.text.trim();
     final String image = _imageController.text.trim();
-    final String category = _imageController.text.trim();
-
+    final String category = _categoryController.text.trim();
+    final String typeTransaction = _categoryController.text.trim();
     final String description = _descriptionController.text.trim();
     final int price = int.tryParse(_priceController.text.trim()) ?? 0;
 
@@ -49,6 +51,7 @@ class _TransactionCreateState extends State<TransactionCreate> {
         'description': description,
         'price': price,
         'category': category,
+        'typeTransaction': typeTransaction,
       };
 
       FirebaseFirestore.instance
@@ -65,12 +68,14 @@ class _TransactionCreateState extends State<TransactionCreate> {
           recentDescription = description;
           recentPrice = price;
           recentCategory = category;
+          recenttypeTransaction = typeTransaction;
         });
 
         _titleController.clear();
         _imageController.clear();
         _descriptionController.clear();
         _priceController.clear();
+        _categoryController.clear();
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -101,7 +106,7 @@ class _TransactionCreateState extends State<TransactionCreate> {
     'Transporte',
     'Alimentación',
     'Moda',
-    'Salud y bienestar',
+    'Salud',
     'Entretenimiento',
     'Mascotas',
     'Viajes',
@@ -120,35 +125,196 @@ class _TransactionCreateState extends State<TransactionCreate> {
     return GridView.count(
       crossAxisCount: 3,
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: AlwaysScrollableScrollPhysics(),
       children: categories.map((category) {
         return GestureDetector(
           onTap: () {
-            setState(() {
-              selectedCategory = category;
-              _categoryController.text = category;
-            });
+            Navigator.pop(context,
+                category); // Pasa la categoría seleccionada al cerrar el modal
           },
           child: Container(
             margin: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: selectedCategory == category ? Colors.blue : Colors.grey,
+              border: Border.all(width: 1),
+              color: selectedCategory == category
+                  ? Colors.blue
+                  : Color.fromARGB(255, 255, 255, 255),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Center(
-              child: Text(
-                category,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  getIconForCategory(category),
+                  color: Color.fromARGB(255, 0, 0, 0),
+                  size: 30,
                 ),
-              ),
+                SizedBox(height: 8),
+                Text(
+                  category,
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
         );
       }).toList(),
     );
+  }
+
+  Future<void> _selectCategory() async {
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return _buildCategoryGrid();
+      },
+    );
+
+    if (selected != null) {
+      setState(() {
+        selectedCategory = selected;
+        _categoryController.text = selected;
+      });
+    }
+  }
+
+  IconData getIconForCategory(String category) {
+    switch (category) {
+      case 'Hogar':
+        return Icons.home;
+      case 'Transporte':
+        return Icons.directions_car;
+      case 'Alimentación':
+        return Icons.restaurant;
+      case 'Moda':
+        return Icons.shopping_bag;
+      case 'Salud':
+        return Icons.favorite;
+      case 'Entretenimiento':
+        return Icons.movie;
+      case 'Mascotas':
+        return Icons.pets;
+      case 'Viajes':
+        return Icons.flight;
+      case 'Tecnología':
+        return Icons.devices;
+      case 'Educación':
+        return Icons.school;
+      case 'Impuestos':
+        return Icons.attach_money;
+      case 'Seguros':
+        return Icons.security;
+      case 'Compromisos bancarios':
+        return Icons.account_balance;
+      case 'Mi negocio':
+        return Icons.business;
+      case 'Otros':
+        return Icons.category;
+      default:
+        return Icons.category;
+    }
+  }
+
+  Widget _buildImageGrid() {
+    return GridView.count(
+      crossAxisCount: 3,
+      shrinkWrap: true,
+      physics: AlwaysScrollableScrollPhysics(),
+      children: categories.map((category) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.pop(context,
+                category); // Pasa la categoría seleccionada al cerrar el modal
+          },
+          child: Container(
+            margin: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              border: Border.all(width: 1),
+              color: selectedCategory == category
+                  ? Colors.blue
+                  : Color.fromARGB(255, 255, 255, 255),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  getIconForCategory(category),
+                  color: Color.fromARGB(255, 0, 0, 0),
+                  size: 30,
+                ),
+                SizedBox(height: 8),
+                Text(
+                  category,
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Future<void> _selectImage() async {
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return _buildCategoryGrid();
+      },
+    );
+
+    if (selected != null) {
+      setState(() {
+        selectedCategory = selected;
+        _categoryController.text = selected;
+      });
+    }
+  }
+
+  IconData getImageForCategory(String category) {
+    switch (category) {
+      case 'Hogar':
+        return Icons.home;
+      case 'Transporte':
+        return Icons.directions_car;
+      case 'Alimentación':
+        return Icons.restaurant;
+      case 'Moda':
+        return Icons.shopping_bag;
+      case 'Salud':
+        return Icons.favorite;
+      case 'Entretenimiento':
+        return Icons.movie;
+      case 'Mascotas':
+        return Icons.pets;
+      case 'Viajes':
+        return Icons.flight;
+      case 'Tecnología':
+        return Icons.devices;
+      case 'Educación':
+        return Icons.school;
+      case 'Impuestos':
+        return Icons.attach_money;
+      case 'Seguros':
+        return Icons.security;
+      case 'Compromisos bancarios':
+        return Icons.account_balance;
+      case 'Mi negocio':
+        return Icons.business;
+      case 'Otros':
+        return Icons.category;
+      default:
+        return Icons.category;
+    }
   }
 
   @override
@@ -161,11 +327,11 @@ class _TransactionCreateState extends State<TransactionCreate> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
               child: RecentTransactionsCardCreate(
-                title: recentTitle,
-                image: recentImage,
-                category: recentCategory,
-                price: recentPrice,
-              ),
+                  title: recentTitle,
+                  image: recentImage,
+                  category: recentCategory,
+                  price: recentPrice,
+                  typeTransaction: recenttypeTransaction),
             ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
@@ -192,25 +358,23 @@ class _TransactionCreateState extends State<TransactionCreate> {
                   SizedBox(
                     height: 15,
                   ),
-                  TextFormField(
-                    onChanged: (value) {
-                      setState(() {
-                        recentImage = value.trim();
-                      });
+                  GestureDetector(
+                    onTap: () {
+                      _selectImage(); // Llama al método para mostrar el modal y seleccionar una categoría
                     },
-                    controller: _imageController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      hintText: 'Imagen',
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.calendar_today,
-                        color: Colors.grey,
+                    child: AbsorbPointer(
+                      child: TextFormField(
+                        controller: _imageController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 15),
+                          hintText: 'Imagen',
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -219,12 +383,7 @@ class _TransactionCreateState extends State<TransactionCreate> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return _buildCategoryGrid(); // Show the category grid in a modal bottom sheet
-                        },
-                      );
+                      _selectCategory(); // Llama al método para mostrar el modal y seleccionar una categoría
                     },
                     child: AbsorbPointer(
                       child: TextFormField(
@@ -238,16 +397,56 @@ class _TransactionCreateState extends State<TransactionCreate> {
                             color: Colors.grey,
                             fontSize: 16,
                           ),
-                          prefixIcon: Icon(
-                            Icons.calendar_today,
-                            color: Colors.grey,
-                          ),
                         ),
                       ),
                     ),
                   ),
                   SizedBox(
                     height: 15,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ToggleButtons(
+                        isSelected: [
+                          true,
+                          false
+                        ], // Estado inicial de los botones
+                        borderRadius: BorderRadius.circular(10),
+                        selectedColor: Colors.white,
+                        fillColor: Colors.blue,
+                        onPressed: (index) {
+                          setState(() {
+                            // Lógica para manejar el cambio de estado de los botones
+                            // Puedes almacenar el estado seleccionado en una variable y utilizarlo según sea necesario
+                          });
+                        },
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            child: Text(
+                              'Ingreso',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            child: Text(
+                              'Salida',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                   TextFormField(
                     onChanged: (value) {
@@ -264,10 +463,6 @@ class _TransactionCreateState extends State<TransactionCreate> {
                       hintStyle: TextStyle(
                         color: Colors.grey,
                         fontSize: 16,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.calendar_today,
-                        color: Colors.grey,
                       ),
                     ),
                   ),
@@ -290,10 +485,6 @@ class _TransactionCreateState extends State<TransactionCreate> {
                       hintStyle: TextStyle(
                         color: Colors.grey,
                         fontSize: 16,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.calendar_today,
-                        color: Colors.grey,
                       ),
                     ),
                   ),

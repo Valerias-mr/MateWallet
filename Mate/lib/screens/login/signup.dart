@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bankingapp/animation/FadeAnimation.dart';
 
-
 class SignupPage extends StatefulWidget {
   @override
   _SignupPageState createState() => _SignupPageState();
@@ -169,7 +168,7 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  Future signUp() async {
+  Future<void> signUp() async {
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
 
@@ -182,8 +181,49 @@ class _SignupPageState extends State<SignupPage> {
     );
 
     try {
-      final userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
+      // Realizar la verificación OTP
+      final phoneNumber = _celularController.text.trim();
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          // Verificación automática (solo se produce en dispositivos confiables)
+          await FirebaseAuth.instance.signInWithCredential(credential);
+          // Registro de usuario después de la verificación
+          await registerUser();
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          print(e);
+          Utils.showSnackBar(e.message);
+          Navigator.pop(context); // Cerrar el diálogo de progreso
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          // Guardar el ID de verificación para su uso posterior
+          // y pasar a la página de verificación OTP
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Authenticate(
+                verificationId: verificationId,
+                phoneNumber: phoneNumber,
+              ),
+            ),
+          );
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          // Manejar el tiempo de espera de la verificación automática aquí
+        },
+      );
+    } catch (e) {
+      print(e);
+      Utils.showSnackBar(e.toString());
+      Navigator.pop(context); // Cerrar el diálogo de progreso
+    }
+  }
+
+  Future<void> registerUser() async {
+    try {
+      final userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
@@ -199,18 +239,16 @@ class _SignupPageState extends State<SignupPage> {
         'Phone_Number': _celularController.text.trim(),
       });
 
-      // Mostrar pantalla de verificación de OTP
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Authenticate()),
-      );
-    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context); // Cerrar el diálogo de progreso
+      Navigator.popUntil(
+          context,
+          ModalRoute.withName(
+              '/')); // Cerrar todas las pantallas y volver a la pantalla de inicio
+    } catch (e) {
       print(e);
-      Utils.showSnackBar(e.message);
+      Utils.showSnackBar(e.toString());
+      Navigator.pop(context); // Cerrar el diálogo de progreso
     }
-
-    Navigator.pop(context); // Cerrar el diálogo de progreso
-    Navigator.popUntil(context, ModalRoute.withName('/')); // Cerrar todas las pantallas y volver a la pantalla de inicio
   }
 
   Widget makeInput({label, controller}) {
@@ -243,7 +281,7 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
- Widget makeSelectorInput({label, entrada, obscureText = false, controller}) {
+  Widget makeSelectorInput({label, entrada, obscureText = false, controller}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -377,7 +415,6 @@ class _SignupPageState extends State<SignupPage> {
             }
 
             // Validar que el número de celular contenga solo dígitos
-            
 
             return null;
           },

@@ -17,7 +17,7 @@ class CardComponent extends StatelessWidget {
       Colors.blue,
       Colors.red,
       Colors.green,
-      Colors.yellow,
+      Color.fromARGB(255, 255, 196, 0)
     ]; // Lista de colores para las tarjetas
     final Color color = cardColors[Random().nextInt(cardColors.length)];
     final String cardNumber = document['cardNumber'];

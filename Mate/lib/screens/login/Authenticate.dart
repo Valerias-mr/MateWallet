@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter_verification_code/flutter_verification_code.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../controllers/getcel.dart';
-
 class Authenticate extends StatefulWidget {
-  const Authenticate({Key? key}) : super(key: key);
+  final String phoneNumber;
+  final String verificationId;
+
+  Authenticate(
+      {Key? key, required this.phoneNumber, required this.verificationId})
+      : super(key: key);
 
   @override
   _AuthenticateState createState() => _AuthenticateState();
@@ -45,59 +47,42 @@ class _AuthenticateState extends State<Authenticate> {
     });
   }
 
-  void verify() async {
+  Future<void> verify(String code) async {
     setState(() {
       _isLoading = true;
     });
 
-    final PhoneVerificationCompleted verificationCompleted =
-        (PhoneAuthCredential credential) async {
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      setState(() {
-        _isVerified = true;
-        _isLoading = false;
-      });
-    };
-
-    final PhoneVerificationFailed verificationFailed =
-        (FirebaseAuthException e) {
-      setState(() {
-        _isLoading = false;
-      });
-      print('Verification failed: $e');
-    };
-
-    final PhoneCodeSent codeSent =
-        (String verificationId, int? resendToken) async {
-      _verificationId = verificationId;
-    };
-
-    final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
-        (String verificationId) {
-      _verificationId = verificationId;
-    };
-    String? phoneNumber = await fetchUserPhoneNumber();
-    if (phoneNumber != null) {
-      print('Número de teléfono del usuario: $phoneNumber');
-    } else {
-      print('No se encontró el número de teléfono del usuario.');
-    }
-
     try {
-      await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber:
-            phoneNumber, 
-        timeout: const Duration(seconds: 120),
-        verificationCompleted: verificationCompleted,
-        verificationFailed: verificationFailed,
-        codeSent: codeSent,
-        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: widget.verificationId,
+        smsCode: code,
       );
+
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      if (userCredential.user != null) {
+        // El código OTP es válido, el usuario está autenticado correctamente
+        setState(() {
+          _isLoading = false;
+          _isVerified = true;
+        });
+        // Puedes realizar acciones adicionales aquí después de la verificación exitosa
+      } else {
+        // El código OTP no es válido
+        setState(() {
+          _isLoading = false;
+          _isVerified = false;
+        });
+        // Mostrar un mensaje de error o realizar acciones adicionales si es necesario
+      }
     } catch (e) {
+      // Error durante la verificación del código OTP
+      print(e);
       setState(() {
         _isLoading = false;
+        _isVerified = false;
       });
-      print('Phone number verification failed: $e');
+      // Mostrar un mensaje de error o realizar acciones adicionales si es necesario
     }
   }
 
@@ -196,9 +181,9 @@ class _AuthenticateState extends State<Authenticate> {
               MaterialButton(
                 elevation: 0,
                 onPressed: _code.length < 4
-                    ? () => {}
+                    ? null
                     : () {
-                        verify();
+                        verify(_code);
                       },
                 color: Colors.orange.shade400,
                 minWidth: MediaQuery.of(context).size.width * 0.8,
