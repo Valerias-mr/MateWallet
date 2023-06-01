@@ -6,6 +6,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:bankingapp/animation/FadeAnimation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future signIn() async {
     showDialog(
@@ -34,6 +36,31 @@ class _LoginPageState extends State<LoginPage> {
     }
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
+
+  Future<void> signInWithGoogle() async {
+  try {
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser!.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+    final User? user = userCredential.user;
+    
+    // Hacer algo con el usuario registrado con Google (por ejemplo, guardar en Firestore).
+    // ...
+  } catch (e) {
+    print(e);
+    Utils.showSnackBar(e.toString());
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -132,6 +159,42 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       )),
+                  FadeAnimation(
+  1.4,
+  Padding(
+    padding: EdgeInsets.symmetric(horizontal: 40),
+    child: Container(
+      padding: EdgeInsets.only(top: 3, left: 3),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(50),
+        border: Border(
+          bottom: BorderSide(color: Colors.black),
+          top: BorderSide(color: Colors.black),
+          left: BorderSide(color: Colors.black),
+          right: BorderSide(color: Colors.black),
+        ),
+      ),
+      child: MaterialButton(
+        minWidth: double.infinity,
+        height: 60,
+        onPressed: signInWithGoogle, // Usar el método signInWithGoogle aquí
+        color: Colors.yellow,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Text(
+          "Iniciar Sesión con Google",
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
+        ),
+      ),
+    ),
+  ),
+),
+
                   FadeAnimation(
                       1.5,
                       Row(
