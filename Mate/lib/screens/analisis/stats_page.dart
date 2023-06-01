@@ -1,9 +1,11 @@
 import 'package:bankingapp/json/day_month.dart';
 import 'package:bankingapp/theme/colors.dart';
+import 'package:bankingapp/widgets/appbar.dart';
 import 'package:bankingapp/widgets/chart.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons_null_safety/flutter_icons_null_safety.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
@@ -13,33 +15,200 @@ import '../../widgets/donut_charts.dart';
 import '../../widgets/percent_indicator.dart';
 import '../../widgets/wave_progress.dart';
 
-var data = [
-  DataPerItem('Home', 35, Colors.greenAccent),
-  DataPerItem('Food & Drink', 25, Colors.yellow),
-  DataPerItem('Hotel & Restaurant', 24, Colors.indigo),
-  DataPerItem('Travelling', 40, Colors.pinkAccent),
-];
-
-var series = [
-  charts.Series<DataPerItem, String>(
-    id: 'Item',
-    domainFn: (DataPerItem clickData, _) => clickData.name,
-    measureFn: (DataPerItem clickData, _) => clickData.percent,
-    colorFn: (DataPerItem clickData, _) => clickData.color,
-    data: data,
-  ),
-];
 const double baseHeight = 650.0;
 
 double screenAwareSize(double size, BuildContext context) {
   return size * MediaQuery.of(context).size.height / baseHeight;
 }
 
-class StatsPage extends StatelessWidget {
+class StatsPage extends StatefulWidget {
+  final user = FirebaseAuth.instance.currentUser!;
+
+  @override
+  _StatsPageState createState() => _StatsPageState();
+}
+
+class _StatsPageState extends State<StatsPage> {
+  List<QueryDocumentSnapshot> budgets = [];
+  double totalBudgets = 0;
+  double totalCreditCardsBalance = 0;
+  double totalIncomeTransaction = 0;
+  double totalExpenseTransaction = 0;
+
+  late Future<void> fetchBudgetsFuture;
+  late Future<void> fetchTotalBudgetsFuture;
+  late Future<void> fetchTotalCreditCardsBalanceFuture;
+  late Future<void> fetchTotalTransactionIncomeFuture;
+  late Future<void> fetchTotalTransactionExpenseFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchBudgetsFuture = fetchBudgets();
+    fetchTotalBudgetsFuture = fetchTotalBudgets();
+    fetchTotalCreditCardsBalanceFuture = fetchTotalCreditCardsBalance();
+    fetchTotalTransactionIncomeFuture = fetchTransactionIncome();
+    fetchTotalTransactionExpenseFuture = fetchTransactionExpense();
+  }
+
+  Future<void> fetchBudgets() async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.user.uid)
+          .collection('budgets')
+          .get();
+
+      setState(() {
+        budgets = snapshot.docs;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> fetchTotalBudgets() async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.user.uid)
+          .collection('budgets')
+          .get();
+
+      double total = 0;
+
+      for (final budgetDoc in snapshot.docs) {
+        final budgetData = budgetDoc.data() as Map<String, dynamic>;
+        if (budgetData != null) {
+          final priceBudget = budgetData['priceBudget'] ?? 0;
+          total += priceBudget.toDouble();
+        }
+      }
+
+      setState(() {
+        totalBudgets = total;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> fetchTotalCreditCardsBalance() async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.user.uid)
+          .collection('cards')
+          .get();
+
+      double totalBalance = 0;
+
+      for (final cardDoc in snapshot.docs) {
+        final cardData = cardDoc.data() as Map<String, dynamic>;
+        final balance = cardData['balance'] ?? 0;
+        totalBalance += balance.toDouble();
+      }
+
+      setState(() {
+        totalCreditCardsBalance = totalBalance;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> fetchTransactionExpense() async {
+    try {
+      final String userId = widget.user.uid; // ID del usuario actual
+      final QuerySnapshot cardsSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('cards')
+          .get();
+
+      double totalIncome = 0;
+      double totalExpense = 0;
+
+      for (final cardDoc in cardsSnapshot.docs) {
+        final QuerySnapshot transactionsSnapshot = await FirebaseFirestore
+            .instance
+            .collection('users')
+            .doc(userId)
+            .collection('cards')
+            .doc(cardDoc.id)
+            .collection('transactions')
+            .get();
+
+        for (final transactionDoc in transactionsSnapshot.docs) {
+          final transactionData = transactionDoc.data() as Map<String, dynamic>;
+          final typeTransaction = transactionData['typeTransaction'] as String;
+          final amount = transactionData['price'] as double;
+
+          if (typeTransaction == '+') {
+            totalIncome += amount;
+          } else if (typeTransaction == '-') {
+            totalExpense += amount;
+          }
+        }
+      }
+
+      setState(() {
+        totalIncomeTransaction = totalIncome;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> fetchTransactionIncome() async {
+    try {
+      final String userId = widget.user.uid; // ID del usuario actual
+      final QuerySnapshot cardsSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('cards')
+          .get();
+
+      double totalIncome = 0;
+      double totalExpense = 0;
+
+      for (final cardDoc in cardsSnapshot.docs) {
+        final QuerySnapshot transactionsSnapshot = await FirebaseFirestore
+            .instance
+            .collection('users')
+            .doc(userId)
+            .collection('cards')
+            .doc(cardDoc.id)
+            .collection('transactions')
+            .get();
+
+        for (final transactionDoc in transactionsSnapshot.docs) {
+          final transactionData = transactionDoc.data() as Map<String, dynamic>;
+          final typeTransaction = transactionData['typeTransaction'] as String;
+          final amount = transactionData['price'] as double;
+
+          if (typeTransaction == '+') {
+            totalIncome += amount;
+          } else if (typeTransaction == '-') {
+            totalExpense += amount;
+          }
+        }
+      }
+      setState(() {
+        totalIncomeTransaction = 200000;
+
+        print(totalIncome.toInt());
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final _media = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: MyAppBar(userId: widget.user.uid),
       body: ListView(
         physics: BouncingScrollPhysics(),
         padding: EdgeInsets.only(
@@ -52,18 +221,10 @@ class StatsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                "Overview",
+                "Resumen",
                 style: TextStyle(
                   fontSize: 35,
                   fontWeight: FontWeight.bold,
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.black87),
                 ),
               ),
             ],
@@ -72,7 +233,7 @@ class StatsPage extends StatelessWidget {
             height: 25,
           ),
           Text(
-            "Accounts",
+            "Cuentas",
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -80,87 +241,55 @@ class StatsPage extends StatelessWidget {
               letterSpacing: 0.4,
             ),
           ),
+          // Cards
           Row(
-            children: <Widget>[
-              colorCard("Cash", 35.170, 1, context, Color(0xFF1b5bff)),
-              colorCard("Credit Debt", 4320, -1, context, Color(0xFFff3f5e)),
+            children: [
+              FutureBuilder<void>(
+                future: fetchTotalBudgetsFuture,
+                builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    // Muestra un indicador de carga mientras se obtienen los datos
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    // Muestra un mensaje de error si ocurre algún problema
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    // Los datos se han obtenido correctamente, puedes mostrar los widgets dependientes de totalBudgets
+                    return Row(
+                      children: [
+                        Row(
+                          children: <Widget>[
+                            colorCard(
+                              "Ahorros",
+                              totalBudgets,
+                              1,
+                              context,
+                              Color(0xFF1b5bff),
+                            )
+                          ],
+                        ),
+                        // ...
+                      ],
+                    );
+                  }
+                },
+              ),
+              Row(
+                children: <Widget>[
+                  colorCard(
+                    "Tarjetas registradas",
+                    totalCreditCardsBalance,
+                    1,
+                    context,
+                    Color.fromARGB(255, 243, 17, 17),
+                  )
+                ],
+              )
             ],
           ),
           SizedBox(
             height: 30,
           ),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: "Spending",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "Varela",
-                  ),
-                ),
-                TextSpan(
-                  text: "    July 2018",
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    fontFamily: "Varela",
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(
-              top: 15,
-              right: 20,
-            ),
-            height:
-                screenAwareSize(_media.longestSide <= 775 ? 180 : 130, context),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade100,
-                  blurRadius: 6,
-                  spreadRadius: 10,
-                )
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  height: 180,
-                  width: 160,
-                  child: DonutPieChart(
-                    series,
-                    animate: true,
-                  ),
-                ),
-                Container(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 15,
-                      ),
-                      donutCard(Colors.indigo, "Home"),
-                      donutCard(Colors.yellow, "Food & Drink"),
-                      donutCard(Colors.greenAccent, "Hotel & Restaurant"),
-                      donutCard(Colors.pinkAccent, "Travelling"),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
           SizedBox(
             height: 30,
           ),
@@ -168,7 +297,7 @@ class StatsPage extends StatelessWidget {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: "Budgets",
+                  text: "Ahorros",
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 24,
@@ -177,7 +306,7 @@ class StatsPage extends StatelessWidget {
                   ),
                 ),
                 TextSpan(
-                  text: "    July",
+                  text: "    Julio",
                   style: TextStyle(
                     color: Colors.grey.shade400,
                     fontWeight: FontWeight.w700,
@@ -188,13 +317,14 @@ class StatsPage extends StatelessWidget {
               ],
             ),
           ),
+
           Container(
             margin: EdgeInsets.only(
               top: 15,
               right: 20,
             ),
             padding: EdgeInsets.all(10),
-            height: screenAwareSize(45, context),
+            height: screenAwareSize(150, context),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(6),
@@ -206,32 +336,57 @@ class StatsPage extends StatelessWidget {
                 )
               ],
             ),
-            child: LinearPercentIndicator(
-              width: screenAwareSize(
-                  _media.width - (_media.longestSide <= 775 ? 100 : 160),
-                  context),
-              lineHeight: 20.0,
-              percent: 0.68,
-              backgroundColor: Colors.grey.shade300,
-              progressColor: Color(0xFF1b52ff),
-              animation: true,
-              animateFromLastPercent: true,
-              alignment: MainAxisAlignment.spaceEvenly,
-              animationDuration: 1000,
-              linearStrokeCap: LinearStrokeCap.roundAll,
-              leading: Text("Leading"),
-              trailing: Text("Trailing"),
-              center: Text(
-                "68.0%",
-                style: TextStyle(color: Colors.white),
-              ),
+            child: ListView.builder(
+              physics: AlwaysScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: budgets.length,
+              itemBuilder: (context, index) {
+                final budgetData = (budgets[index]?.data() ?? {})
+                    as Map<String, dynamic>; // Realizar conversión de tipo
+                final nameBudget = budgetData['nameBudget'] ?? 0.0;
+                final percentBudget = budgetData['porcentBudget'] ?? 0.0;
+
+                return Column(
+                  children: [
+                    Text(
+                      "Ahorro ${nameBudget}",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    LinearPercentIndicator(
+                      width: screenAwareSize(
+                        _media.width - (_media.longestSide <= 775 ? 100 : 160),
+                        context,
+                      ),
+                      lineHeight: 20.0,
+                      percent: percentBudget / 100,
+                      backgroundColor: Colors.grey.shade300,
+                      progressColor: Color(0xFF1b52ff),
+                      animation: true,
+                      animateFromLastPercent: true,
+                      alignment: MainAxisAlignment.spaceEvenly,
+                      animationDuration: 1000,
+                      linearStrokeCap: LinearStrokeCap.roundAll,
+                      leading: Text(""),
+                      trailing: Text(""),
+                      center: Text(
+                        "${(percentBudget).toStringAsFixed(1)}%",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
           SizedBox(
             height: 30,
           ),
           Text(
-            "Cash flow",
+            "Flujo de dinero",
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -241,16 +396,17 @@ class StatsPage extends StatelessWidget {
           ),
           vaweCard(
             context,
-            "Earned",
-            200,
+            "Entradas",
+            totalIncomeTransaction,
             1,
             Colors.grey.shade100,
             Color(0xFF716cff),
           ),
+
           vaweCard(
             context,
-            "Spent",
-            3210,
+            "Gastos",
+            totalExpenseTransaction,
             -1,
             Colors.grey.shade100,
             Color(0xFFff596b),

@@ -93,6 +93,9 @@ class _BudgetPageState extends State<BudgetPage> {
                 double percentage = budgetPercentage.toDouble();
                 Color percentageColor = getPercentageColor(percentage);
 
+                budgetLabelPercentage =
+                    budgetLabelPercentage.replaceAll(RegExp(r'\.\d+'), '');
+
                 return GestureDetector(
                   onTap: () {
                     // Navegar a otra página y pasar el ID del budget seleccionado como parámetro

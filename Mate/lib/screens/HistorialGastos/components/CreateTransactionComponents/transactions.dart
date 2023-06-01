@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class RecentTransactionsCardCreate extends StatelessWidget {
   final String title;
-  final String image;
   final String category;
   final String typeTransaction;
 
@@ -11,7 +10,6 @@ class RecentTransactionsCardCreate extends StatelessWidget {
   const RecentTransactionsCardCreate({
     Key? key,
     required this.title,
-    required this.image,
     required this.category,
     required this.price,
     required this.typeTransaction,
@@ -23,9 +21,8 @@ class RecentTransactionsCardCreate extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       child: Column(
         children: [
-          RecentTransaction(
+          RecentTransactionCreate(
             title: title,
-            image: "assets/images/netflix.png",
             category: category,
             price: price,
             typeTransaction: typeTransaction,
@@ -36,23 +33,26 @@ class RecentTransactionsCardCreate extends StatelessWidget {
   }
 }
 
-class RecentTransaction extends StatelessWidget {
-  const RecentTransaction(
-      {Key? key,
-      required this.image,
-      required this.title,
-      required this.category,
-      required this.price,
-      required this.typeTransaction,
-      this.description})
-      : super(key: key);
+class RecentTransactionCreate extends StatelessWidget {
+  const RecentTransactionCreate({
+    Key? key,
+    required this.title,
+    required this.category,
+    required this.price,
+    required this.typeTransaction,
+    this.description,
+  }) : super(key: key);
 
-  final String image, title, category, typeTransaction;
+  final String title, category, typeTransaction;
   final String? description;
   final int price;
 
   @override
   Widget build(BuildContext context) {
+    Color iconColor = typeTransaction == "-" ? Colors.red : Colors.green;
+    IconData iconData =
+        typeTransaction == "-" ? Icons.arrow_back : Icons.arrow_forward;
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: 5),
       child: Row(
@@ -64,7 +64,11 @@ class RecentTransaction extends StatelessWidget {
                 margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 child: CircleAvatar(
                   radius: 20.0,
-                  backgroundImage: AssetImage(image),
+                  backgroundColor: Colors.transparent,
+                  child: Icon(
+                    iconData,
+                    color: iconColor,
+                  ),
                 ),
               ),
               Column(
@@ -89,7 +93,7 @@ class RecentTransaction extends StatelessWidget {
           Text(
             "$typeTransaction \$$price",
             style: TextStyle(
-              color: Colors.black,
+              color: iconColor,
               fontWeight: FontWeight.bold,
             ),
           ),

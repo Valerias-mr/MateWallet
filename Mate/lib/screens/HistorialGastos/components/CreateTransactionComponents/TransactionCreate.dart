@@ -1,5 +1,6 @@
 import 'package:bankingapp/screens/HistorialGastos/components/CreateTransactionComponents/transactions.dart';
 import 'package:bankingapp/screens/HistorialGastos/components/TransactionsComponents/components/transactions.dart';
+import 'package:bankingapp/screens/home/components/transactions.dart';
 import 'package:bankingapp/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -219,67 +220,6 @@ class _TransactionCreateState extends State<TransactionCreate> {
     }
   }
 
-  Widget _buildImageGrid() {
-    return GridView.count(
-      crossAxisCount: 3,
-      shrinkWrap: true,
-      physics: AlwaysScrollableScrollPhysics(),
-      children: categories.map((category) {
-        return GestureDetector(
-          onTap: () {
-            Navigator.pop(context,
-                category); // Pasa la categoría seleccionada al cerrar el modal
-          },
-          child: Container(
-            margin: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              border: Border.all(width: 1),
-              color: selectedCategory == category
-                  ? Colors.blue
-                  : Color.fromARGB(255, 255, 255, 255),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  getIconForCategory(category),
-                  color: Color.fromARGB(255, 0, 0, 0),
-                  size: 30,
-                ),
-                SizedBox(height: 8),
-                Text(
-                  category,
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 0, 0, 0),
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  Future<void> _selectImage() async {
-    final selected = await showModalBottomSheet<String>(
-      context: context,
-      builder: (BuildContext context) {
-        return _buildCategoryGrid();
-      },
-    );
-
-    if (selected != null) {
-      setState(() {
-        selectedCategory = selected;
-        _categoryController.text = selected;
-      });
-    }
-  }
-
   IconData getImageForCategory(String category) {
     switch (category) {
       case 'Hogar':
@@ -328,7 +268,6 @@ class _TransactionCreateState extends State<TransactionCreate> {
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
               child: RecentTransactionsCardCreate(
                   title: recentTitle,
-                  image: recentImage,
                   category: recentCategory,
                   price: recentPrice,
                   typeTransaction: recenttypeTransaction),
@@ -357,26 +296,6 @@ class _TransactionCreateState extends State<TransactionCreate> {
                   ),
                   SizedBox(
                     height: 15,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      _selectImage(); // Llama al método para mostrar el modal y seleccionar una categoría
-                    },
-                    child: AbsorbPointer(
-                      child: TextFormField(
-                        controller: _imageController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 15),
-                          hintText: 'Imagen',
-                          hintStyle: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
                   ),
                   SizedBox(
                     height: 15,

@@ -15,48 +15,54 @@ class CardSectionBudget extends StatefulWidget {
 
 class _CardSectionBudgetState extends State<CardSectionBudget> {
   String? selectedCardId;
+  final TextEditingController _budgetController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser!;
-    final TextEditingController _budgetController = TextEditingController();
+  void dispose() {
+    _budgetController.dispose();
+    super.dispose();
+  }
 
-    void _saveBudget() {
-      if (selectedCardId != null) {
-        final int priceBudgetAbono = int.parse(_budgetController.text.trim());
-        String labelPercentage = '';
+  void _saveBudget() {
+    if (selectedCardId != null && _budgetController.text.trim().isNotEmpty) {
+      final int priceBudgetAbono = int.parse(_budgetController.text.trim());
+      String labelPercentage = '';
 
-        // Obtener la tarjeta seleccionada
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .collection('cards')
-            .doc(selectedCardId)
-            .get()
-            .then((cardSnapshot) {
-          final double balance =
-              (cardSnapshot.data()?['balance'] ?? 0).toDouble();
+      final user = FirebaseAuth.instance.currentUser!;
 
-          if (balance >= priceBudgetAbono) {
-            // Obtener el valor actual de priceBudget en Firestore
-            FirebaseFirestore.instance
-                .collection('users')
-                .doc(user.uid)
-                .collection('budgets')
-                .doc(widget.budgetId)
-                .get()
-                .then((snapshot) {
-              final double priceBudget = snapshot.data()?['priceBudget'] ?? 0;
-              final String nameBudget = snapshot.data()?['nameBudget'] ?? '';
-              double percentBudget = snapshot.data()?['porcentBudget'] ?? 0;
+      // Obtener la tarjeta seleccionada
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('cards')
+          .doc(selectedCardId)
+          .get()
+          .then((cardSnapshot) {
+        final double balance =
+            (cardSnapshot.data()?['balance'] ?? 0).toDouble();
 
-              // Calcular nuevos valores
-              percentBudget =
-                  percentBudget + (priceBudgetAbono * 100) / priceBudget;
-              //label
-              labelPercentage = '$percentBudget%';
+        if (balance >= priceBudgetAbono) {
+          // Obtener el valor actual de priceBudget en Firestore
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .collection('budgets')
+              .doc(widget.budgetId)
+              .get()
+              .then((snapshot) {
+            final double priceBudget =
+                (snapshot.data()?['priceBudget'] ?? 0).toDouble();
+            final String nameBudget = snapshot.data()?['nameBudget'] ?? '';
+            double percentBudget =
+                (snapshot.data()?['porcentBudget'] ?? 0).toDouble();
 
-              // Actualizar los valores en Firebase
+            // Calcular nuevos valores
+            percentBudget =
+                percentBudget + (priceBudgetAbono * 100) / priceBudget;
+            //label
+            labelPercentage = '$percentBudget%';
+
+            if (percentBudget <= 100) {
               FirebaseFirestore.instance
                   .collection('users')
                   .doc(user.uid)
@@ -112,15 +118,54 @@ class _CardSectionBudgetState extends State<CardSectionBudget> {
                 context,
                 MaterialPageRoute(builder: (context) => HomeScreen()),
               );
-            });
-          } else {
-            // El balance de la tarjeta es menor que priceBudgetAbono
-            print('El balance de la tarjeta es menor que el precio del abono');
-            // Aquí puedes mostrar un mensaje de error o realizar otra acción en caso de que el balance sea insuficiente.
-          }
-        });
-      }
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Error'),
+                  content: Text('El valor a ahorrar no debe superar la meta.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            }
+            // Actualizar los valores en Firebase
+          });
+        } else {
+          // El balance de la tarjeta es menor que priceBudgetAbono
+          print('El balance de la tarjeta es menor que el precio del abono');
+          // Aquí puedes mostrar un mensaje de error o realizar otra acción en caso de que el balance sea insuficiente.
+        }
+      });
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text(
+              'Debe seleccionar una tarjeta y llenar el campo de valor a ahorrar.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser!;
 
     final _saveBudgetButton = StreamBuilder<bool>(
       builder: (context, snapshot) {
@@ -167,7 +212,7 @@ class _CardSectionBudgetState extends State<CardSectionBudget> {
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('users')
-                      .doc(user!.uid)
+                      .doc(user.uid)
                       .collection('cards')
                       .snapshots(),
                   builder: (context, snapshot) {
