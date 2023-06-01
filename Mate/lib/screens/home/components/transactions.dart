@@ -131,7 +131,7 @@ class RecentTransaction extends StatelessWidget {
     Color iconColor = typeTransaction == "-" ? Colors.red : Colors.green;
     IconData iconData =
         typeTransaction == "-" ? Icons.arrow_back : Icons.arrow_forward;
-
+  
     return Container(
       margin: EdgeInsets.symmetric(vertical: 5),
       child: Row(

@@ -22,12 +22,10 @@ class _TransactionCreateState extends State<TransactionCreate> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _categoryController = TextEditingController();
   TextEditingController _typeTransactionController = TextEditingController();
-  TextEditingController _imageController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _priceController = TextEditingController();
 
   String recentTitle = '';
-  String recentImage = '';
   String recentDescription = '';
   String recentCategory = '';
   String recenttypeTransaction = '';
@@ -36,19 +34,16 @@ class _TransactionCreateState extends State<TransactionCreate> {
 
   void _createTransaction() {
     final String title = _titleController.text.trim();
-    final String image = _imageController.text.trim();
     final String category = _categoryController.text.trim();
-    final String typeTransaction = _categoryController.text.trim();
+    final String typeTransaction = _typeTransactionController.text.trim();
     final String description = _descriptionController.text.trim();
     final int price = int.tryParse(_priceController.text.trim()) ?? 0;
 
     if (title.isNotEmpty &&
-        image.isNotEmpty &&
         description.isNotEmpty &&
         price > 0) {
       final transactionData = {
         'title': title,
-        'image': image,
         'description': description,
         'price': price,
         'category': category,
@@ -65,7 +60,6 @@ class _TransactionCreateState extends State<TransactionCreate> {
           .then((value) {
         setState(() {
           recentTitle = title;
-          recentImage = image;
           recentDescription = description;
           recentPrice = price;
           recentCategory = category;
@@ -73,7 +67,6 @@ class _TransactionCreateState extends State<TransactionCreate> {
         });
 
         _titleController.clear();
-        _imageController.clear();
         _descriptionController.clear();
         _priceController.clear();
         _categoryController.clear();
@@ -327,44 +320,46 @@ class _TransactionCreateState extends State<TransactionCreate> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ToggleButtons(
-                        isSelected: [
-                          true,
-                          false
-                        ], // Estado inicial de los botones
-                        borderRadius: BorderRadius.circular(10),
-                        selectedColor: Colors.white,
-                        fillColor: Colors.blue,
-                        onPressed: (index) {
-                          setState(() {
-                            // Lógica para manejar el cambio de estado de los botones
-                            // Puedes almacenar el estado seleccionado en una variable y utilizarlo según sea necesario
-                          });
-                        },
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                            child: Text(
-                              'Ingreso',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                            child: Text(
-                              'Salida',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+  isSelected: [
+    _typeTransactionController.text == "+",
+    _typeTransactionController.text == "-"
+  ],
+  borderRadius: BorderRadius.circular(10),
+  selectedColor: Colors.white,
+  fillColor: Colors.blue,
+  onPressed: (index) {
+    setState(() {
+      // Lógica para manejar el cambio de estado de los botones
+      if (index == 0) {
+        _typeTransactionController.text = "+";  // Botón de "Ingreso" seleccionado
+      } else if (index == 1) {
+        _typeTransactionController.text = "-";  // Botón de "Salida" seleccionado
+      }
+    });
+  },
+  children: [
+    Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Text(
+        'Ingreso',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+    Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Text(
+        'Salida',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  ],
+),
                     ],
                   ),
                   TextFormField(

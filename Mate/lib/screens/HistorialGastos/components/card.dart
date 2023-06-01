@@ -22,6 +22,8 @@ class CardComponentMovements extends StatelessWidget {
     ]; // Lista de colores para las tarjetas
     final Color color = cardColors[Random().nextInt(cardColors.length)];
     final String cardNumber = document['cardNumber'];
+String maskedCardNumber = "**** **** **** ${cardNumber.substring(cardNumber.length - 4)}";
+
     final String expiryDate = document['expiryDate'];
     final double balanceValue = document['balance'].toDouble();
     final String balance = balanceValue.toString();
@@ -44,7 +46,7 @@ class CardComponentMovements extends StatelessWidget {
               children: [
                 SvgPicture.asset("assets/icons/mastercard.svg"),
                 SizedBox(width: 10),
-                Text(cardNumber,
+                Text(maskedCardNumber,
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold)),
               ],

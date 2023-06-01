@@ -89,7 +89,7 @@ class MyApp extends StatelessWidget {
                     }
                   }
                   // Si el usuario no está registrado, redirígelo a la página de inicio de sesión
-                  return LoginPage();
+                  return HomeLoginPage();
                 }
                 // Mientras se carga la autenticación, puedes mostrar una pantalla de carga o algún indicador de progreso
                 return CircularProgressIndicator();

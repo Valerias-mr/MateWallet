@@ -37,10 +37,11 @@ class RecentTransactionsCardsH extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final transaction = transactions[index];
 
-                        return RecentTransaction(
+                        return RecentTransactionH3(
                           title: transaction['title'],
-                          image: "assets/images/netflix.png",
                           description: transaction['description'],
+                          category: transaction['category'],
+                          typeTransaction: transaction['typeTransaction'],
                           price: transaction['price'],
                         );
                       },
@@ -57,21 +58,26 @@ class RecentTransactionsCardsH extends StatelessWidget {
     );
   }
 }
-
-class RecentTransaction extends StatelessWidget {
-  const RecentTransaction({
+class RecentTransactionH3 extends StatelessWidget {
+  const RecentTransactionH3({
     Key? key,
-    required this.image,
     required this.title,
-    required this.description,
+    required this.category,
     required this.price,
+    required this.typeTransaction,
+    this.description,
   }) : super(key: key);
 
-  final String image, title, description;
+  final String title, category, typeTransaction;
+  final String? description;
   final int price;
 
   @override
   Widget build(BuildContext context) {
+    Color iconColor = typeTransaction == "-" ? Colors.red : Colors.green;
+    IconData iconData =
+        typeTransaction == "-" ? Icons.arrow_back : Icons.arrow_forward;
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: 5),
       child: Row(
@@ -83,7 +89,11 @@ class RecentTransaction extends StatelessWidget {
                 margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 child: CircleAvatar(
                   radius: 20.0,
-                  backgroundImage: AssetImage(image),
+                  backgroundColor: Colors.transparent,
+                  child: Icon(
+                    iconData,
+                    color: iconColor,
+                  ),
                 ),
               ),
               Column(
@@ -98,7 +108,7 @@ class RecentTransaction extends StatelessWidget {
                   ),
                   SizedBox(height: 2),
                   Text(
-                    description,
+                    category,
                     style: TextStyle(color: Colors.grey),
                   ),
                 ],
@@ -106,9 +116,9 @@ class RecentTransaction extends StatelessWidget {
             ],
           ),
           Text(
-            "- \$$price",
+            "$typeTransaction \$$price",
             style: TextStyle(
-              color: Colors.black,
+              color: iconColor,
               fontWeight: FontWeight.bold,
             ),
           ),

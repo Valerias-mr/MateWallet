@@ -127,7 +127,6 @@ class _StatsPageState extends State<StatsPage> {
           .get();
 
       double totalIncome = 0;
-      double totalExpense = 0;
 
       for (final cardDoc in cardsSnapshot.docs) {
         final QuerySnapshot transactionsSnapshot = await FirebaseFirestore
@@ -142,18 +141,16 @@ class _StatsPageState extends State<StatsPage> {
         for (final transactionDoc in transactionsSnapshot.docs) {
           final transactionData = transactionDoc.data() as Map<String, dynamic>;
           final typeTransaction = transactionData['typeTransaction'] as String;
-          final amount = transactionData['price'] as double;
+          final  amount = transactionData['price'];
 
-          if (typeTransaction == '+') {
-            totalIncome += amount;
-          } else if (typeTransaction == '-') {
-            totalExpense += amount;
-          }
+          if (typeTransaction == '-') {
+            totalIncome += amount;}
+          
         }
       }
 
       setState(() {
-        totalIncomeTransaction = totalIncome;
+        totalExpenseTransaction = totalIncome;
       });
     } catch (e) {
       print(e.toString());
@@ -170,7 +167,6 @@ class _StatsPageState extends State<StatsPage> {
           .get();
 
       double totalIncome = 0;
-      double totalExpense = 0;
 
       for (final cardDoc in cardsSnapshot.docs) {
         final QuerySnapshot transactionsSnapshot = await FirebaseFirestore
@@ -185,13 +181,11 @@ class _StatsPageState extends State<StatsPage> {
         for (final transactionDoc in transactionsSnapshot.docs) {
           final transactionData = transactionDoc.data() as Map<String, dynamic>;
           final typeTransaction = transactionData['typeTransaction'] as String;
-          final amount = transactionData['price'] as double;
+          final amount = transactionData['price'] ;
 
           if (typeTransaction == '+') {
             totalIncome += amount;
-          } else if (typeTransaction == '-') {
-            totalExpense += amount;
-          }
+          } 
         }
       }
       setState(() {
@@ -358,7 +352,7 @@ class _StatsPageState extends State<StatsPage> {
                     ),
                     LinearPercentIndicator(
                       width: screenAwareSize(
-                        _media.width - (_media.longestSide <= 775 ? 100 : 160),
+                        _media.width - (_media.longestSide <= 775 ? 100 : 180),
                         context,
                       ),
                       lineHeight: 20.0,
@@ -401,6 +395,7 @@ class _StatsPageState extends State<StatsPage> {
             1,
             Colors.grey.shade100,
             Color(0xFF716cff),
+            (totalIncomeTransaction/totalCreditCardsBalance).toString()
           ),
 
           vaweCard(
@@ -410,6 +405,8 @@ class _StatsPageState extends State<StatsPage> {
             -1,
             Colors.grey.shade100,
             Color(0xFFff596b),
+                        (totalIncomeTransaction/totalCreditCardsBalance).toString()
+
           ),
         ],
       ),
@@ -417,7 +414,7 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget vaweCard(BuildContext context, String name, double amount, int type,
-      Color fillColor, Color bgColor) {
+      Color fillColor, Color bgColor, String porcentValue) {
     return Container(
       margin: EdgeInsets.only(
         top: 15,
@@ -450,7 +447,7 @@ class _StatsPageState extends State<StatsPage> {
                 67,
               ),
               Text(
-                "80%",
+                "\$",
                 style:
                     TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
               ),
