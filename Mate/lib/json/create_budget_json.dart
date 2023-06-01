@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 const List categories = [
   {"name": "Hogar", "icon": Icons.home},
   {"name": "Transporte", "icon": Icons.directions_car},
+  {"name": "Ahorros", "icon": Icons.savings},
   {"name": "Alimentación", "icon": Icons.restaurant},
   {"name": "Moda", "icon": Icons.shopping_bag},
   {"name": "Salud", "icon": Icons.favorite},

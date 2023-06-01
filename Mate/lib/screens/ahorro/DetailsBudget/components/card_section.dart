@@ -5,7 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class CardSectionBudget extends StatefulWidget {
-  const CardSectionBudget({Key? key}) : super(key: key);
+  final String budgetId;
+
+  const CardSectionBudget({Key? key, required this.budgetId}) : super(key: key);
 
   @override
   _CardSectionBudgetState createState() => _CardSectionBudgetState();
@@ -13,80 +15,113 @@ class CardSectionBudget extends StatefulWidget {
 
 class _CardSectionBudgetState extends State<CardSectionBudget> {
   String? selectedCardId;
-  final user = FirebaseAuth.instance.currentUser!;
-  final TextEditingController _budgetController = TextEditingController();
 
-  void _saveBudget() {
-    if (selectedCardId != null) {
-      final int priceBudgetAbono = int.parse(_budgetController.text.trim());
-      double percentBudget = 0.0;
-      String labelPercentage = '';
+  @override
+  Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser!;
+    final TextEditingController _budgetController = TextEditingController();
 
-      // Obtener el valor actual de priceBudget en Firestore
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .collection('budgets')
-          .doc(selectedCardId)
-          .get()
-          .then((snapshot) {
-        final int currentValue = snapshot.data()?['porcentBudget'] ?? 0;
-        final int priceBudget = snapshot.data()?['priceBudget'] ?? 0;
-        final int nameBudget = snapshot.data()?['nameBudget'] ?? 0;
+    void _saveBudget() {
+      if (selectedCardId != null) {
+        final int priceBudgetAbono = int.parse(_budgetController.text.trim());
+        String labelPercentage = '';
 
-        // Calcular nuevos valores
-        percentBudget += (priceBudgetAbono * 100) / priceBudget;
-        labelPercentage = '$percentBudget%';
-
-        // Actualizar los valores en Firebase
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .collection('budgets')
-            .doc(selectedCardId)
-            .update({
-          'percentBudget': percentBudget,
-          'label_percentage': labelPercentage
-        }).then((value) {
-          print('Budget updated successfully');
-        }).catchError((error) {
-          print('Failed to update budget: $error');
-        });
-
-        // Crear una nueva transacción en la tarjeta seleccionada
-        final DateTime now = DateTime.now();
-        final String formattedDate =
-            "${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-
+        // Obtener la tarjeta seleccionada
         FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
             .collection('cards')
             .doc(selectedCardId)
-            .collection('transactions')
-            .add({
-          'category': "percentBudget",
-          'description': "Ahorro a $nameBudget",
-          'price': priceBudget,
-          'title': "Ahorro a $nameBudget",
-          'typeTransaction': "-",
-        }).then((value) {
-          print('Transaction created successfully');
-        }).catchError((error) {
-          print('Failed to create transaction: $error');
+            .get()
+            .then((cardSnapshot) {
+          final double balance =
+              (cardSnapshot.data()?['balance'] ?? 0).toDouble();
+
+          if (balance >= priceBudgetAbono) {
+            // Obtener el valor actual de priceBudget en Firestore
+            FirebaseFirestore.instance
+                .collection('users')
+                .doc(user.uid)
+                .collection('budgets')
+                .doc(widget.budgetId)
+                .get()
+                .then((snapshot) {
+              final double priceBudget = snapshot.data()?['priceBudget'] ?? 0;
+              final String nameBudget = snapshot.data()?['nameBudget'] ?? '';
+              double percentBudget = snapshot.data()?['porcentBudget'] ?? 0;
+
+              // Calcular nuevos valores
+              percentBudget =
+                  percentBudget + (priceBudgetAbono * 100) / priceBudget;
+              //label
+              labelPercentage = '$percentBudget%';
+
+              // Actualizar los valores en Firebase
+              FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user.uid)
+                  .collection('budgets')
+                  .doc(widget.budgetId)
+                  .update({
+                'porcentBudget': percentBudget,
+                'label_percentage': labelPercentage
+              }).then((value) {
+                print('Budget updated successfully');
+              }).catchError((error) {
+                print('Failed to update budget: $error');
+              });
+
+              // Actualizar el balance de la tarjeta seleccionada
+              double newBalance = balance - priceBudgetAbono;
+              FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user.uid)
+                  .collection('cards')
+                  .doc(selectedCardId)
+                  .update({'balance': newBalance}).then((value) {
+                print('Card balance updated successfully');
+              }).catchError((error) {
+                print('Failed to update card balance: $error');
+              });
+
+              // Crear una nueva transacción en la tarjeta seleccionada
+              final DateTime now = DateTime.now();
+              final String formattedDate =
+                  "${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+              FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user.uid)
+                  .collection('cards')
+                  .doc(selectedCardId)
+                  .collection('transactions')
+                  .add({
+                'category': "Ahorros",
+                'description': "Ahorro a $nameBudget",
+                'price': priceBudgetAbono.toInt(),
+                'title': "Ahorro a $nameBudget",
+                'typeTransaction': "-",
+              }).then((value) {
+                print('Transaction created successfully');
+              }).catchError((error) {
+                print('Failed to create transaction: $error');
+              });
+
+              // Navegar de regreso a la pantalla de inicio
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
+            });
+          } else {
+            // El balance de la tarjeta es menor que priceBudgetAbono
+            print('El balance de la tarjeta es menor que el precio del abono');
+            // Aquí puedes mostrar un mensaje de error o realizar otra acción en caso de que el balance sea insuficiente.
+          }
         });
-
-        // Navegar de regreso a la pantalla de inicio
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
-      });
+      }
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
     final _saveBudgetButton = StreamBuilder<bool>(
       builder: (context, snapshot) {
         return Container(

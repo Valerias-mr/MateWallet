@@ -20,7 +20,7 @@ class HomeScreenBudgetDetails extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       body: Stack(
-        children: [BodyDetailsBudget(userId: userId)],
+        children: [BodyDetailsBudget(budgetId: budgetId)],
       ),
       appBar: MyAppBar(userId: userId),
     );

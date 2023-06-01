@@ -33,7 +33,7 @@ class _CardComponentBudgetState extends State<CardComponentBudget> {
     final Color color = cardColors[Random().nextInt(cardColors.length)];
     final String cardNumber = widget.document['cardNumber'];
     final String expiryDate = widget.document['expiryDate'];
-    final String balance = widget.document['balance'];
+    final String balance = widget.document['balance'].toString();
 
     return GestureDetector(
       onTap: () {

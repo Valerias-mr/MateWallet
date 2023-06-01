@@ -22,7 +22,7 @@ class CardComponent extends StatelessWidget {
     final Color color = cardColors[Random().nextInt(cardColors.length)];
     final String cardNumber = document['cardNumber'];
     final String expiryDate = document['expiryDate'];
-    final String balance = document['balance'];
+    final int balance = (document['balance'] ?? 0).toDouble().toInt();
 
     return Container(
       margin: EdgeInsets.only(right: 10),

@@ -7,16 +7,16 @@ import 'package:bankingapp/screens/home/home_screen.dart';
 import 'package:provider/provider.dart';
 
 class BodyDetailsBudget extends StatelessWidget {
-  final String userId;
+  final String budgetId;
 
-  const BodyDetailsBudget({Key? key, required this.userId}) : super(key: key);
+  const BodyDetailsBudget({Key? key, required this.budgetId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20),
       child: Stack(
-        children: [CardSectionBudget()],
+        children: [CardSectionBudget(budgetId: budgetId)],
       ),
     );
   }
